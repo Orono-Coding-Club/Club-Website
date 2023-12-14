@@ -1,8 +1,17 @@
-/* wow what an epic css file, truly the file of all time */
 .p {
   color: #6778a8;
   font-family: Arial;
 }
+h1 {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #6778a8
+}
+redirect {
+  font-family: Arial;
+}
 body {
   text-align: center;
+}
+nav {
+  text-align: left;
 }
