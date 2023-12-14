@@ -8,9 +8,10 @@ h1 {
 }
 #duck {
   float: left;
+  padding-left: 45px;
 }
 
 #placeholder {
-  padding-left: 500px;
-  float:left;
+  float: right;
+  padding-right: 45px;
 }
