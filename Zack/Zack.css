@@ -3,9 +3,13 @@
     font-family: "Comic Sans MS";
     text-align: center;
 }
+h1 {
+  color: #6778a8
+}
 #duck {
   float: left;
 }
+
 #placeholder {
   padding-left: 500px;
   float:left;

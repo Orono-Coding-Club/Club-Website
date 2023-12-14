@@ -2,16 +2,20 @@
   color: #6778a8;
   font-family: Arial;
 }
+
 h1 {
   font-family: Arial, Helvetica, sans-serif;
   color: #6778a8
 }
-redirect {
-  font-family: Arial;
-}
+
 body {
   text-align: center;
 }
+
 #ZackPage {
-  text-align: left;
+  float: left;
+}
+
+#PlaceholderPage {
+  float: right;
 }
