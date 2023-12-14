@@ -4,5 +4,9 @@
     text-align: center;
 }
 #duck {
-  text-align: left;
+  float: left;
+}
+#placeholder {
+  padding-left: 500px;
+  float:left;
 }
