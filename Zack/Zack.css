@@ -1,5 +1,5 @@
 /* its going to be all comic sans */
-body {
+#main {
     font-family: "Comic Sans MS";
     text-align: center;
-  }
+}
