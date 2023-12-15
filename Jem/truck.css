@@ -13,6 +13,8 @@
 }
 #truckreviews {
   float: right;
+  background-color: #9ee8b9;
+  border: 5px solid #90d1a8;
 }
 #customerreview {
   font-family: OdinRounded;
