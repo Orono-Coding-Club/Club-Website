@@ -15,3 +15,35 @@ h1 {
   float: right;
   padding-right: 45px;
 }
+
+#githubLogo {
+  float: left;
+  padding-left: 350px;
+}
+
+#itchioLogo {
+  text-align: center;
+}
+
+#scratchLogo {
+  float: right;
+  padding-right: 350px;
+}
+
+#seperator {
+  padding: 77px 55px;
+}
+
+#seperator2 {
+  padding: 77px 55px;
+}
+
+#aboutHeader {
+  color: #6778a8
+}
+
+#aboutText {
+  padding-left: 25%;
+  max-width: 50%;
+  
+}
