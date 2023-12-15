@@ -12,14 +12,21 @@ body {
   text-align: center;
 }
 
+#clubBanner {
+  max-width: 50%;
+}
+
 #ZackPage {
   float: left;
+  max-width: 20%;
 }
 
 #JemPage {
   float: none;
+  max-width: 20%;
 }
 
 #PlaceholderPage {
   float: right;
+  max-width: 20%;
 }
