@@ -6,7 +6,7 @@
   font-family: OdinRounded;
 }
 #trucktext {
-  float: right;
+  float: left;
   background-color: #cfe1ff;
   border: 5px solid #b6c6e0;
   padding: 10px;
