@@ -1,0 +1,7 @@
+@font-face {
+  font-family: OdinRounded;
+  src: url(/Assets/odinrounded.otf);
+}
+.p {
+  font-family: OdinRounded;
+}
