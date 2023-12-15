@@ -1,3 +1,10 @@
+@font-face {
+  font-family: OdinRounded;
+  src: url(/Assets/odinrounded.otf);
+}
+.p {
+  font-size: 20px;
+}
 #trucklore {
   font-size: 20;
 }
@@ -6,6 +13,10 @@
 }
 #truckreviews {
   float: right;
+}
+#customerreview {
+  font-family: OdinRounded;
+  font-size: 40px;
 }
 .sticky {
   position: sticky;
