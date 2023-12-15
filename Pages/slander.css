@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#home {
+    text-align: center;
+}
+#homeImage {
+    max-width: 50%;
+}
+
+#title {
+    text-align: center;
+    color: #6778a8;
+}
+
+#main {
+    text-align: center;
+}
