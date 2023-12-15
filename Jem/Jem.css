@@ -1,6 +1,10 @@
 #trucklore {
   font-size: 20;
 }
+#trucklorediv {
+  background-color: #8aace3;
+}
 .sticky {
   position: sticky;
+  top: 0;
 }
