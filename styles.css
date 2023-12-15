@@ -16,6 +16,11 @@ body {
   float: left;
 }
 
+#JemPage {
+  width: 200px;
+  height: 150px:
+}
+
 #PlaceholderPage {
   float: right;
 }
