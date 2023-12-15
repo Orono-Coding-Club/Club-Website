@@ -1,3 +1,3 @@
 <?php
-$reviewtext =
+$reviewtext = $_POST['reviewtext'];
 ?>
