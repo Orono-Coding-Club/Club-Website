@@ -1,15 +1,14 @@
 .p {
   color: #6778a8;
-  font-family: Arial;
 }
 
 h1 {
-  font-family: Arial, Helvetica, sans-serif;
   color: #6778a8
 }
 
 body {
   text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #clubBanner {
@@ -29,4 +28,17 @@ body {
 #PlaceholderPage {
   float: right;
   max-width: 20%;
+}
+
+#seperator {
+  padding: 150px 55px;
+}
+
+#pagesTitle {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#slanderbanner {
+  float: left;
+  color:#000;
 }
