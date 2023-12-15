@@ -8,26 +8,31 @@ h1 {
 }
 #duck {
   float: left;
-  padding-left: 45px;
+  padding-left: 5%;
+  max-width: 45%;
 }
 
 #placeholder {
   float: right;
-  padding-right: 45px;
+  padding-right: 5%;
+  max-width: 15%;
 }
 
 #githubLogo {
   float: left;
-  padding-left: 350px;
+  padding-left: 25%;
+  max-width: 10%;
 }
 
 #itchioLogo {
   text-align: center;
+    max-width: 10%;
 }
 
 #scratchLogo {
   float: right;
-  padding-right: 350px;
+  padding-right: 25%;
+  max-width: 10%;
 }
 
 #seperator {
@@ -46,4 +51,12 @@ h1 {
   padding-left: 25%;
   max-width: 50%;
   
+}
+
+#seperator3 {
+  padding: 200px 55px;
+}
+
+#home {
+  max-width: 50%;
 }

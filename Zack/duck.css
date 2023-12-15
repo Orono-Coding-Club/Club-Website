@@ -2,3 +2,11 @@ body {
     font-family: "Comic Sans MS";
     text-align: center;
   }
+
+#home {
+  max-width: 50%;
+}
+
+#zack {
+  max-width: 50%;
+}
