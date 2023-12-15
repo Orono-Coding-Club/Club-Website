@@ -4,6 +4,9 @@
 #trucklorediv {
   background-color: #8aace3;
 }
+#truckreviews {
+  float: right;
+}
 .sticky {
   position: sticky;
   top: 0;
