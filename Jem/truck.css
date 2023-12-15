@@ -15,6 +15,8 @@
   float: right;
   background-color: #9ee8b9;
   border: 5px solid #90d1a8;
+  display: flex;
+  justify-content: space-between;
 }
 #customerreview {
   font-family: OdinRounded;
