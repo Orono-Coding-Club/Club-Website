@@ -11,6 +11,11 @@
 #trucklorediv {
   background-color: #8aace3;
 }
+#reviews {
+  float: right;
+  background-color: #829E90;
+  border: 3px solid #70867B;
+}
 #truckreviews {
   float: right;
   background-color: #9ee8b9;
