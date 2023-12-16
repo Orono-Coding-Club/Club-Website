@@ -17,3 +17,7 @@ body {
 #main {
     text-align: center;
 }
+
+#finalsiteImage {
+    max-width: 40%;
+}
