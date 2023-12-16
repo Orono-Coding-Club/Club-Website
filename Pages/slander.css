@@ -18,6 +18,23 @@ body {
     text-align: center;
 }
 
+
+
+#leftImages {
+    float: left;
+    text-align: center;
+    padding-left: 5%;
+}
+
+#rightImages {
+    float: right;
+    text-align: center;
+}
+
 #finalsiteImage {
-    max-width: 100px;
+    max-width: 45%;
+}
+
+#logoMessup {
+    max-width: 45%;
 }
