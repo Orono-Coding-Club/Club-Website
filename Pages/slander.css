@@ -23,7 +23,7 @@ body {
 #leftImages {
     float: left;
     text-align: center;
-    padding-left: 5%;
+    /*padding-left: 5%;*/
 }
 
 #rightImages {
@@ -36,5 +36,9 @@ body {
 }
 
 #logoMessup {
+    max-width: 45%;
+}
+
+#videoBar {
     max-width: 45%;
 }
