@@ -12,6 +12,7 @@ body {
 }
 
 #clubBanner {
+  height: 50px;
   max-width: 100%;
 }
 
