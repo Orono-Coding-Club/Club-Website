@@ -13,6 +13,9 @@
 }
 #aboutmediv {
   float: right;
+  background-color: #E3EDF3;
+  border: 2px solid #D4E8F4;
+  padding: 5px
 }
 #aboutmetitle {
   font-family: OdinRounded;
