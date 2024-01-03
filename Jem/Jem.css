@@ -3,11 +3,17 @@
   src: url(/Assets/odinrounded.otf);
 }
 .p {
-  font-family: OdinRounded;
+  
 }
 #trucktext {
   float: left;
   background-color: #cfe1ff;
   border: 5px solid #b6c6e0;
   padding: 10px;
+}
+#aboutmediv {
+  float: right;
+}
+#aboutmetitle {
+  font-family: OdinRounded;
 }
