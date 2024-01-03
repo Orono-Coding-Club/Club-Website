@@ -5,6 +5,10 @@
 .p {
   
 }
+#truck {
+  max-width: 100%;
+  max-height: 100%;
+}
 #trucktext {
   float: left;
   background-color: #cfe1ff;
