@@ -18,6 +18,8 @@
 .header a.logo {
   font-size: 25px;
   font-weight: bold;
+  text-align: left;
+  padding: 10px;
 }
 
 .header a:hover {
