@@ -2,6 +2,9 @@
   overflow: hidden;
   background-color: #f1f1f1;
   padding: 10px 10px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 }
 
 .header a {
