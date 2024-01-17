@@ -37,6 +37,7 @@ img.logo {
 
 .header-right {
   float: right;
+  margin: 0px;
 }
 
 @media screen and (max-width: 500px) {
