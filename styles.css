@@ -97,3 +97,7 @@ body {
   color:#000;
   padding-left: 5%;
 }
+
+#headertitle {
+  float: left;
+}
