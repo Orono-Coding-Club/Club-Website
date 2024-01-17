@@ -97,4 +97,5 @@ body {
 
 #headerdiv {
   position: -webkit-sticky;
+  top: 0;
 }
