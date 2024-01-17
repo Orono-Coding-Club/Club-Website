@@ -1,7 +1,7 @@
 .header {
   overflow: hidden;
   background-color: #f1f1f1;
-  padding: 0px;
+  padding: 10px;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -22,7 +22,7 @@ img.logo {
   text-align: left;
   padding: 0px;
   float: left;
-  margin: 0px;
+  margin: 10px;
 }
 
 .header a:hover {
