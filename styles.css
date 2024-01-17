@@ -18,7 +18,7 @@
   border-radius: 4px;
 }
 
-img #clubBanner .logo {
+img.logo {
   text-align: left;
   padding: 0px;
   float: left;
