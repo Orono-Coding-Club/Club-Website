@@ -18,7 +18,7 @@
   border-radius: 4px;
 }
 
-img .clubBanner a.logo {
+#clubBanner a.logo {
   font-size: 25px;
   font-weight: bold;
   text-align: left;
