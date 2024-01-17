@@ -10,6 +10,7 @@
   position: sticky;
   top: 0;
   background-color: #a5b9d9;
+  height: 40px;
 }
 #truck {
   max-width: 100%;
