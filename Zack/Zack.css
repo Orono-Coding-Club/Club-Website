@@ -12,16 +12,28 @@ h1 {
   max-width: 45%;
 }
 
-#placeholder {
+#sorting {
   float: right;
   padding-right: 5%;
-  max-width: 15%;
+  max-width: 25%;
+}
+
+#raymarcher1 {
+  float: left;
+  padding-left: 5%;
+  width: 25%;
+}
+
+#multiplayergaem {
+  float: right;
+  padding-right: 5%;
+  width: 25%;
 }
 
 #githubLogo {
   float: left;
   padding-left: 25%;
-  max-width: 10%;
+  width: 10%;
 }
 
 #itchioLogo {
@@ -41,6 +53,9 @@ h1 {
 
 #seperator2 {
   padding: 77px 55px;
+}
+#seperator2-5 {
+  padding: 195px 55px;
 }
 
 #aboutHeader {
