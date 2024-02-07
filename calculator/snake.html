@@ -19,4 +19,10 @@ var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
 var xpos = [10];
 var ypos = [10];
+
+function draw() {
+    for(var i = 0;i<xpos.length;i++) {
+    ctx.fillRect(xpos[i],ypos[i],20,20);
+    }
+}
 </script>
