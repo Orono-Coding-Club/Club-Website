@@ -85,6 +85,11 @@ body {
   max-width: 20%;
 }
 
+#CalculatorPage {
+  float: left;
+  max-width: 20%;
+}
+
 #seperator {
   padding: 150px 55px;
 }
