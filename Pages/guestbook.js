@@ -7,7 +7,7 @@
 
 // ]
 async function fetchCommentData(){
-    let commentdata = await fetch("https://cv43fpkz-3000.use.devtunnels.ms/getcomments")//await fetch("https://corsproxy.io/?" + encodeURIComponent("https://cv43fpkz-3000.use.devtunnels.ms/getcomments")) // cors proxy is sick
+    let commentdata = await fetch("https://corsproxy.io/?" + encodeURIComponent("https://cv43fpkz-3000.use.devtunnels.ms/getcomments")) // cors proxy is sick
     commentdata = await commentdata.text()
     commentdata = JSON.parse(commentdata).data
     console.log("New comment data:")
