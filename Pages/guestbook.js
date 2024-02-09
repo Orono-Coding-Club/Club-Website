@@ -7,11 +7,16 @@
 
 // ]
 async function fetchCommentData(){
-    let commentdata = await fetch("https://corsproxy.io/?" + encodeURIComponent("https://cv43fpkz-3000.use.devtunnels.ms/getcomments")) // cors proxy is sick
+    //let url = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://cv43fpkz-3000.use.devtunnels.ms/getcomments") // this one works, but microsoft is stupid so it doesn't work
+    //let url = await fetch("http://localhost:3000/getcomments")
+    //let url = await fetch("http://thingproxy.freeboard.io/fetch/https://cv43fpkz-3000.use.devtunnels.ms/getcomments")
+    let url = await fetch("https://corsproxy.io/?" + encodeURIComponent("https://cv43fpkz-3000.use.devtunnels.ms/getcomments")) // this one doesn't update for some reason?
+    let commentdata = await fetch(url)
     commentdata = await commentdata.text()
     commentdata = JSON.parse(commentdata).data
     console.log("New comment data:")
     console.log(commentdata)
+    console.log(`Fetched from ${url}`)
     commentdata.reverse()
     return commentdata
 }
@@ -82,8 +87,10 @@ async function submitformandstuff(e) { // weird name to prevent accidentally ove
         "time": Date.now().toString()
     }
     toPost = new URLSearchParams(toPost).toString()
-    let toPostURL = "https://corsproxy.io/?" + encodeURIComponent(`https://cv43fpkz-3000.use.devtunnels.ms/postcomment?${toPost}`) // https://cv43fpkz-3000.use.devtunnels.ms Note to self: swap for other domain.
-    console.log(toPostURL)
+    //let toPostURL = `localhost:3000/${toPost}`
+    //let toPostURL = "https://thingproxy.freeboard.io/fetch/" + `https://cv43fpkz-3000.use.devtunnels.ms/postcomment?${toPost}` // https://cv43fpkz-3000.use.devtunnels.ms Note to self: swap for other domain.
+    let toPostURL = "https://corsproxy.io/?" + encodeURIComponent(`https://cv43fpkz-3000.use.devtunnels.ms/postcomment?${toPost}`)
+    console.log(`Sending comment to toPostURL`)
 
     await fetch(toPostURL) // do the thing
     nameInput.value = ""
