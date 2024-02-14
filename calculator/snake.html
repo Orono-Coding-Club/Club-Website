@@ -18,6 +18,7 @@
 var n = 0;
 function start() {
     n = 1;
+    draw();
 }
 var velox = 0;
 var veloy = 0;
@@ -26,9 +27,7 @@ var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
 var xpos = [10,30,30];
 var ypos = [10,10,30];
-/*while(n=1) {
-    setTimeout(draw(),100);
-}
+    
 function draw() {
     document.onkeydown = function(e) { 
         switch (e.keyCode) { 
@@ -55,5 +54,5 @@ function draw() {
     ypos[i] += veloy;
     ctx.fillRect(xpos[i],ypos[i],18,18);
     }
-}*/
+}
 </script>
