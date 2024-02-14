@@ -14,14 +14,42 @@
 </html>
 
 <script>
+var velox = 0;
+var veloy = 0;
+var n = 1;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
 var xpos = [10,30,30];
 var ypos = [10,10,30];
+do {
 draw();
+}
+while(n=1);
 function draw() {
+    document.onkeydown = function(e) { 
+        switch (e.keyCode) { 
+            case 37: 
+                velox = -20;
+                veloy = 0;
+                break; 
+            case 38: 
+                velox = 0;
+                veloy = -20;
+                break; 
+            case 39: 
+                velox = 20;
+                veloy = 0;
+                break; 
+            case 40: 
+                velox = 0;
+                veloy = 20;
+                break; 
+        } 
+    };
     for(var i = 0;i<xpos.length;i++) {
+    xpos[i] += velox;
+    ypos[i] += veloy;
     ctx.fillRect(xpos[i],ypos[i],18,18);
     }
 }
