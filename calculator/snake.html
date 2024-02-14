@@ -32,6 +32,7 @@ function draw() {
             case 37: 
                 velox = -20;
                 veloy = 0;
+                alert("it");
                 break; 
             case 38: 
                 velox = 0;
@@ -47,7 +48,7 @@ function draw() {
                 break; 
         } 
     };
-    ctx.clearRect(0, 0, 500, 500);
+    ctx.clearRect(0, 0, c.width, c.height);
     xpos[0] += velox;
     ypos[0] += veloy;
     for(var i = 0;i<xpos.length;i++) {
