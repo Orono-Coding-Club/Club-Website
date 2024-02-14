@@ -24,11 +24,10 @@ var veloy = 0;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
-var xpos = [10,30,30];
-var ypos = [10,10,30];
+var xpos = [10,30,30,30,50,70];
+var ypos = [10,10,30,50,50,50];
 
 function draw() {
-    alert("it");
     ctx.clearRect(0, 0, c.width, c.height);
     xpos[0] += velox;
     ypos[0] += veloy;
