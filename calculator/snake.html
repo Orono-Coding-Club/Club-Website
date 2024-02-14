@@ -9,14 +9,18 @@
 </head>
 <body>
   <p>play snake</p>
+    <button onclick="start()">start</button>
     <canvas id="canvas" width="500" height="300"></canvas>
 </body>
 </html>
 
 <script>
+var n = 0;
+function start() {
+    n = 1;
+}
 var velox = 0;
 var veloy = 0;
-var n = 1;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
