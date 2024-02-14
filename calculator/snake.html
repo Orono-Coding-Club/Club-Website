@@ -17,6 +17,7 @@
 <script>
 function start() {
     setInterval(draw, 100);
+    setInterval(keystrokes, 1);
 }
 var velox = 0;
 var veloy = 0;
@@ -25,8 +26,19 @@ var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
 var xpos = [10,30,30];
 var ypos = [10,10,30];
-    
+
 function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    xpos[0] += velox;
+    ypos[0] += veloy;
+    for(var i = 0;i<xpos.length;i++) {
+    xpos[i] = xpos[i-1];
+    ypos[i] = ypos[i-1];
+    ctx.fillRect(xpos[i],ypos[i],18,18);
+    }
+}
+
+function keystrokes() {
     document.onkeydown = function(e) { 
         switch (e.keyCode) { 
             case 37: 
@@ -48,13 +60,5 @@ function draw() {
                 break; 
         } 
     };
-    ctx.clearRect(0, 0, c.width, c.height);
-    xpos[0] += velox;
-    ypos[0] += veloy;
-    for(var i = 0;i<xpos.length;i++) {
-    xpos[i] = xpos[i-1];
-    ypos[i] = ypos[i-1];
-    ctx.fillRect(xpos[i],ypos[i],18,18);
-    }
 }
 </script>
