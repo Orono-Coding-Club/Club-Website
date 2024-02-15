@@ -24,6 +24,12 @@
 
 <script>
 var score = 0;
+var sans = new Audio('../Assets/sans.mp3');
+sans.addEventListener('ended', function() {
+    this.currentTime = 0;
+    this.play();
+}, false);
+    
 var beep = new Audio('../Assets/snakebeep.mp3');
 var beepEat = new Audio('../Assets/snakeeat.mp3');
 function start() {
@@ -32,6 +38,7 @@ function start() {
     setInterval(hitbox, 5000);
     beep.play();
     apple();
+    sans.play();
 }
 var applex = 0;
 var appley = 0;
