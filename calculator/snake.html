@@ -39,10 +39,10 @@ function apple() {
     applex = Math.floor(Math.random() * 489) + 1;
     appley = Math.floor(Math.random() * 289) + 1;
 
-    while(applex % 20 != 0) {
+    while((applex-10) % 20 != 0) {
         applex++
     }
-    while(appley % 20 != 0) {
+    while((appley-10) % 20 != 0) {
         appley++;
     }
 }
