@@ -27,6 +27,9 @@ var xpos = [30,10];
 var ypos = [10,10];
 var xposm = [];
 var yposm = [];
+
+var barrierx = [-10,10,30,50,70,90,110,130,150,170,190,210,230,250,270,290,310,330,350,370,390,410,430,450,470,490,510];
+var barriery = [-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10];
     
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
@@ -46,7 +49,12 @@ function draw() {
     ypos[i] = yposm[i-1];
     ctx.fillRect(xpos[i],ypos[i],18,18);
     for(var i = 1;i<xpos.length;i++) {
-        if(xpos[0] == xpos[i] && ypos[0] == ypos[i] || xpos[0] == borderx[i] && ypos[0] == bordery[i]) {
+        if(xpos[0] == xpos[i] && ypos[0] == ypos[i]) {
+            window.location.href = "http://club-website.pages.dev/calculator/snake.html";
+        }
+    }
+    for(var i = 0;i<barrierx.length;i++) {
+        if(xpos[0] == borderx[i] && ypos[0] == bordery[i]) {
             window.location.href = "http://club-website.pages.dev/calculator/snake.html";
         }
     }
