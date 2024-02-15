@@ -21,6 +21,8 @@ function start() {
     setInterval(hitbox, 5000);
     beep.play();
 }
+var applex = 0;
+var appley = 0;
 var n = 0;
 var velox = 0;
 var veloy = 20;
@@ -32,6 +34,18 @@ var ypos = [10,10,10,10,10,10];
 var xposm = [];
 var yposm = [];
 
+function apple() {
+    applex = Math.floor(Math.random() * 489) + 1;
+    appley = Math.floor(Math.random() * 289) + 1;
+
+    while(applex % 20 != 0) {
+        applex++
+    }
+    while(appley % 20 != 0) {
+        appley++;
+    }
+}
+    
 function hitbox() {
     n = 1;
 }
@@ -58,7 +72,11 @@ function draw() {
     for(var i = 0;i<xpos.length;i++) {
         ctx.fillRect(xpos[i],ypos[i],18,18);
     }
-        
+
+    if(xpos[0] == applex && ypos[0] == appley) {
+        apple();
+    }
+    
     if(n==1) {
 
     if(xpos[0]<0 || xpos[0]>500 || ypos[0]<0 || ypos[0]>300) {
