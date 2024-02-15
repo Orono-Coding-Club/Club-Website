@@ -1,3 +1,7 @@
+body {
+  white-space: nowrap;
+}
+
 #homepage {
   float: left;
   max-width: 20%;
