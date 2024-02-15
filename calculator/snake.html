@@ -134,6 +134,20 @@ function draw() {
         default:
         break;
     }
+    switch(veloy) {
+        case 0:
+        break;
+        case -20:
+        ctx.fillRect(xpos[0]+4,ypos[0]+4,4,4);
+        ctx.fillRect(xpos[0]+10,ypos[0]+4,4,4);
+        break;
+        case 20:
+        ctx.fillRect(xpos[0]+4,ypos[0]+10,4,4);
+        ctx.fillRect(xpos[0]+10,ypos[0]+10,4,4);
+        break;
+        default:
+        break;
+    }
 }
 
 function keystrokes() {
