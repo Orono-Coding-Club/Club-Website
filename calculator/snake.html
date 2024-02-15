@@ -33,7 +33,7 @@ sans.addEventListener('ended', function() {
 var beep = new Audio('../Assets/snakebeep.mp3');
 var beepEat = new Audio('../Assets/snakeeat.mp3');
 function start() {
-    setInterval(draw, 100);
+    var drawInterval = setInterval(draw, 100);
     setInterval(keystrokes, 1);
     setInterval(hitbox, 5000);
     beep.play();
@@ -170,15 +170,15 @@ function keystrokes() {
                 veloy = 20;
                 break;
             case 69:
-                clearInterval(draw):
+                clearInterval(drawInterval):
                 setInterval(draw, 130);
                 break;
             case 72:
-                clearInterval(draw):
+                clearInterval(drawInterval):
                 setInterval(draw, 70);
                 break;
             case 77:
-                clearInterval(draw):
+                clearInterval(drawInterval):
                 setInterval(draw, 100);
                 break;
         } 
