@@ -17,7 +17,9 @@
 function start() {
     setInterval(draw, 100);
     setInterval(keystrokes, 1);
+    setInterval(startHitboxs, 500);
 }
+var n = 0;
 var velox = 0;
 var veloy = 0;
 var c = document.getElementById("canvas");
@@ -28,6 +30,10 @@ var ypos = [10,10,30,50,50,50];
 var xposm = [];
 var yposm = [];
 
+function startHitboxs() {
+    n = 1;
+}
+    
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
     xpos[0] += velox;
@@ -41,11 +47,13 @@ function draw() {
     xpos[i] = xposm[i-1];
     ypos[i] = yposm[i-1];
     ctx.fillRect(xpos[i],ypos[i],18,18);
-    
+
+    if(n==1) {
     for(var i = 1;i<xpos.length;i++) {
         if(xpos[0] == xpos[i] && ypos[0] == ypos[i]) {
             window.location.href = "http://club-website.pages.dev/calculator/snake.html";
         }
+    }
     }
     }
 }
