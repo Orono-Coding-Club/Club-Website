@@ -12,3 +12,8 @@
   border: 3px solid black;
   background-color: black;
 }
+
+#calculatorpage {
+  float: none;
+  max-width: 20%;
+}
