@@ -20,6 +20,7 @@ function start() {
     setInterval(keystrokes, 1);
     setInterval(hitbox, 5000);
     beep.play();
+    apple();
 }
 var applex = 0;
 var appley = 0;
@@ -90,6 +91,8 @@ function draw() {
     }
     }
 }
+    ctx.fillStyle = "red";
+    ctx.fillRect(applex,appley,18,18);
 }
 
 function keystrokes() {
