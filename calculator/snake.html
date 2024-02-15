@@ -24,6 +24,7 @@
 
 <script>
 var score = 0;
+var drawInterval;
 var sans = new Audio('../Assets/sans.mp3');
 sans.addEventListener('ended', function() {
     this.currentTime = 0;
@@ -33,7 +34,7 @@ sans.addEventListener('ended', function() {
 var beep = new Audio('../Assets/snakebeep.mp3');
 var beepEat = new Audio('../Assets/snakeeat.mp3');
 function start() {
-    var drawInterval = setInterval(draw, 100);
+    drawInterval = setInterval(draw, 100);
     setInterval(keystrokes, 1);
     setInterval(hitbox, 5000);
     beep.play();
