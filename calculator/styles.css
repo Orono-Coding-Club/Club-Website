@@ -1,7 +1,3 @@
-body {
-  white-space: nowrap;
-}
-
 #homepage {
   float: left;
   max-width: 20%;
@@ -24,4 +20,5 @@ body {
 
 #snakenav {
   float: right;
+  display: inline;
 }
