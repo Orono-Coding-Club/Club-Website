@@ -5,6 +5,7 @@
     <title>Calculator fun!</title>
     <link rel="icon" type="image/x-icon" href="../Assets/favicon-32x32.png">
     <link href="./styles.css" rel="stylesheet">
+    <img id="sans_face" src="../Assets/sans_face.png">
 </head>
 <body>
   <p>play snake<br>If you leave the black bordered area or run into yourself, you lose.<br>Press h for hard mode, e for easy, m for medium, you can even change difficulties in-game!<br>Created by Jem</p>
@@ -23,6 +24,7 @@
 </html>
 
 <script>
+var sans_face = document.getElementById('sans_face');
 var score = 0;
 var drawInterval;
 var sans = new Audio('../Assets/sans.mp3');
@@ -149,7 +151,7 @@ function draw() {
         default:
         break;
     }
-    ctx.drawImage('../Assets/sans_face.png',xpos[0],ypos[0],20,18);
+    ctx.drawImage(sans_face,xpos[0],ypos[0],20,18);
 }
 
 function keystrokes() {
