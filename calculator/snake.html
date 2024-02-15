@@ -43,6 +43,7 @@ function draw() {
         xposm[i] = xpos[i];
         yposm[i] = ypos[i];
     }
+    if(xpos.length>1) {
     for(var i = 1;i<xpos.length;i++) {
     xpos[i] = xposm[i-1];
     ypos[i] = yposm[i-1];
@@ -56,6 +57,7 @@ function draw() {
     }
     }
     }
+}
 }
 
 function keystrokes() {
