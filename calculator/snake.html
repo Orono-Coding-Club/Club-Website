@@ -46,7 +46,7 @@ function draw() {
     ypos[i] = yposm[i-1];
     ctx.fillRect(xpos[i],ypos[i],18,18);
     for(var i = 1;i<xpos.length;i++) {
-        if(xpos[0] == xpos[i] && ypos[0] == ypos[i]) {
+        if(xpos[0] == xpos[i] && ypos[0] == ypos[i] || xpos[0] == borderx[i] && ypos[0] == bordery[i]) {
             window.location.href = "http://club-website.pages.dev/calculator/snake.html";
         }
     }
