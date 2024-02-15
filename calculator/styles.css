@@ -17,3 +17,7 @@
   float: none;
   max-width: 20%;
 }
+
+#snakenav {
+  float: right;
+}
