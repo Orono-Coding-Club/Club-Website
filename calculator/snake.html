@@ -43,7 +43,12 @@ function draw() {
         xposm[i] = xpos[i];
         yposm[i] = ypos[i];
     }
+    ctx.fillStyle = "black";
+    for(var i = 0;i<barrierx.length;i++) {
+        ctx.fillRect(barrierx[i],barriery[i],18,18);
+    }
     if(xpos.length>1) {
+    ctx.fillStyle = "green";
     for(var i = 1;i<xpos.length;i++) {
     xpos[i] = xposm[i-1];
     ypos[i] = yposm[i-1];
