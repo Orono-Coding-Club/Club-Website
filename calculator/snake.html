@@ -119,12 +119,13 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.font = "20px Comic Sans MS";
     ctx.fillText("Score: " + score,10,25);
-
+    ctx.fillStyle = "black";
     switch(velox) {
         case 0:
         break;
         case -20:
-        ctx.fillRect(xpos[0],ypos[0],9,18);
+        ctx.fillRect(xpos[0]+4,ypos[0]+4,2,2);
+        ctx.fillRect(xpos[0]+4,ypos[0]+14,2,2);
         break;
         case 20:
         ctx.fillRect(xpos[0]+9,ypos[0],9,18);
