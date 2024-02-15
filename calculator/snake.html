@@ -5,7 +5,6 @@
     <title>Calculator fun!</title>
     <link rel="icon" type="image/x-icon" href="../Assets/favicon-32x32.png">
     <link href="./styles.css" rel="stylesheet">
-
 </head>
 <body>
   <p>play snake</p>
@@ -26,15 +25,28 @@ var ctx = c.getContext("2d");
 ctx.fillStyle = "green";
 var xpos = [10,30,30,30,50,70];
 var ypos = [10,10,30,50,50,50];
+var xposm = [];
+var yposm = [];
 
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
     xpos[0] += velox;
     ypos[0] += veloy;
+
+    for(var i = 0;i<xpos.length;i++) {
+        xposm[i] = xpos[i];
+        yposm[i] = ypos[i];
+    }
     for(var i = 1;i<xpos.length;i++) {
-    xpos[i] = xpos[i-1];
-    ypos[i] = ypos[i-1];
+    xpos[i] = xposm[i-1];
+    ypos[i] = yposm[i-1];
     ctx.fillRect(xpos[i],ypos[i],18,18);
+    
+    for(var i = 1;i<xpos.length;i++) {
+        if(xpos[0] == xpos[i] && ypos[0] == ypos[i]) {
+            window.location.href = "http://club-website.pages.dev/calculator/snake.html";
+        }
+    }
     }
 }
 
