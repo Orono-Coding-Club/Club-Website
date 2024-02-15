@@ -51,7 +51,6 @@ function apple() {
     ypos.push(ypos[ypos.length]-veloy);
 
     score++;
-    beepEat.play();
 }
     
 function hitbox() {
@@ -83,6 +82,7 @@ function draw() {
 
     if(xpos[0] == applex && ypos[0] == appley) {
         apple();
+        beepEat.play();
     }
     
     if(n==1) {
