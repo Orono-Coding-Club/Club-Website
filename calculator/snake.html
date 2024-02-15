@@ -14,10 +14,12 @@
 </html>
 
 <script>
+var beep = new Audio('../Assets/snakebeep.mp3');
 function start() {
     setInterval(draw, 100);
     setInterval(keystrokes, 1);
     setInterval(hitbox, 5000);
+    beep.play();
 }
 var n = 0;
 var velox = 0;
