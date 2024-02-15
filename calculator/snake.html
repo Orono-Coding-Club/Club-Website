@@ -47,9 +47,6 @@ function draw() {
     xpos[0] += velox;
     ypos[0] += veloy;
     ctx.fillStyle = "black";
-    for(var i = 0;i<barrierx.length;i++) {
-        ctx.fillRect(barrierx[i],barriery[i],18,18);
-    }
     if(xpos.length>1) {
     ctx.fillStyle = "green";
     for(var i = 1;i<xpos.length;i++) {
