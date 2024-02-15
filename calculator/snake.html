@@ -33,6 +33,9 @@ function draw() {
     xpos[0] += velox;
     ypos[0] += veloy;
 
+    xposm.length = xpos.length;
+    yposm.length = ypos.length;
+    
     for(var i = 0;i<xpos.length;i++) {
         xposm[i] = xpos[i];
         yposm[i] = ypos[i];
