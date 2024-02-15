@@ -59,7 +59,7 @@ function draw() {
         
     if(n==1) {
 
-    if((xpos[0]<0 || xpos[0]>500) && (ypos[0]<0 || ypos[0]>300)) {
+    if(xpos[0]<0 || xpos[0]>500 || ypos[0]<0 || ypos[0]>300) {
         window.location.href = "http://club-website.pages.dev/calculator/snake.html";
     }
     
