@@ -30,9 +30,6 @@ var ypos = [10,10,10,10,10,10];
 var xposm = [];
 var yposm = [];
 
-var barrierx = [-10,10,30,50,70,90,110,130,150,170,190,210,230,250,270,290,310,330,350,370,390,410,430,450,470,490,490,490,490,490,490,490,490,490,490,490,490,490,490,490,-10,10,30,50,70,90,110,130,150,170,190,210,230,250,270,290,310,330,350,370,390,410,430,450,470];
-var barriery = [-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,10,30,50,70,90,110,130,150,170,190,210,230,250,270,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290,290];
-
 function hitbox() {
     n = 1;
 }
@@ -65,13 +62,13 @@ function draw() {
     }
         
     if(n==1) {
+
+    if((xpos[0]<0 || xpos[0]>500) && (ypos[0]<0 || ypos[0]>300)) {
+        window.location.href = "http://club-website.pages.dev/calculator/snake.html";
+    }
+    
     for(var i = 1;i<xpos.length;i++) {
         if(xpos[0] == xpos[i] && ypos[0] == ypos[i]) {
-            window.location.href = "http://club-website.pages.dev/calculator/snake.html";
-        }
-    }
-    for(var i = 0;i<barrierx.length;i++) {
-        if(xpos[0] == barrierx[i] && ypos[0] == barriery[i]) {
             window.location.href = "http://club-website.pages.dev/calculator/snake.html";
         }
     }
