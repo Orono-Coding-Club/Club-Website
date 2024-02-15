@@ -39,8 +39,6 @@ function hitbox() {
     
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
-    xpos[0] += velox;
-    ypos[0] += veloy;
 
     xposm.length = xpos.length;
     yposm.length = ypos.length;
@@ -49,6 +47,8 @@ function draw() {
         xposm[i] = xpos[i];
         yposm[i] = ypos[i];
     }
+    xpos[0] += velox;
+    ypos[0] += veloy;
     ctx.fillStyle = "black";
     for(var i = 0;i<barrierx.length;i++) {
         ctx.fillRect(barrierx[i],barriery[i],18,18);
