@@ -1,5 +1,5 @@
 #homepage {
-  float: left;
+  float: right;
   max-width: 20%;
 }
 
@@ -16,9 +16,4 @@
 #calculatorpage {
   float: none;
   max-width: 20%;
-}
-
-#snakenav {
-  float: right;
-  display: inline;
 }
