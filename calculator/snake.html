@@ -11,6 +11,7 @@
 <body>
   <p>play snake<br>If you leave the black bordered area or run into yourself, you lose.<br>Press h for hard mode, e for easy, m for medium, you can even change difficulties in-game!<br>Created by Jem</p>
     <button onclick="start()">start</button>
+    <button onclick="dialogue()">start with dialogue</button>
     <br>
     <nav id="snakenav">
     <canvas id="canvas" width="500" height="300"></canvas>
@@ -25,6 +26,7 @@
 </html>
 
 <script>
+var sans_dialogue = ["heya","say, could you help me collect some SOULs?","i'm going to grillby's, but papyrus won't let me off that easy","just fill in for me for a while, k?"];
 var sans_face = document.getElementById('sans_face');
 var undertale_red_soul = document.getElementById('undertale_red_soul');
 var score = 0;
@@ -52,6 +54,14 @@ var velox = 0;
 var veloy = 20;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
+    
+function dialogue() {
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 20;
+    ctx.strokeRect(30,180,460,100);
+    start();
+}
+    
 ctx.fillStyle = "green";
 var xpos = [30,10,-10,-30,-50,-70];
 var ypos = [10,10,10,10,10,10];
