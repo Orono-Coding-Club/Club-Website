@@ -20,3 +20,44 @@
     </nav>
 </body>
 </html>
+<script>
+    c = document.getElementById('canvas');
+    ctx = c.getContext('2d');
+
+    var movement = setInterval(playerMovement,1);
+    var drawing = setInterval(draw,10);
+    
+    var player = {
+        x: 10;
+        y: 10;
+        speed: 20;
+    }
+
+    playerMovement() {
+        document.onkeydown = function(e) {
+            switch(e.keycode) {
+                case 37: 
+                    player.x -= player.speed;
+                    break; 
+                case 38: 
+                    player.y -= player.speed;
+                    break; 
+                case 39: 
+                    player.x += player.speed;
+                    break; 
+                case 40: 
+                    player.y += player.speed;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    draw() {
+        ctx.clearRect(0,0,c.width,c.height);
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(player.x,player.y,18,18);
+    }
+</script>
