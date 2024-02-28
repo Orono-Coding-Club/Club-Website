@@ -25,16 +25,19 @@
     c = document.getElementById('canvas');
     ctx = c.getContext('2d');
 
+    var movement;
+    var drawing;
+
     function start() {
-        var movement = setInterval(playerMovement,1);
-        var drawing = setInterval(draw,10);
+        movement = setInterval(playerMovement,1);
+        drawing = setInterval(draw,10);
     }
     
     var player = {
         x: 10,
         y: 10,
         speed: 20,
-    }
+    };
 
     playerMovement() {
         document.onkeydown = function(e) {
