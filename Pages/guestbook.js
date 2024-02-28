@@ -11,8 +11,12 @@ async function fetchCommentData(){
     //let url = await fetch("http://localhost:3000/getcomments")
     //let url = await fetch("http://thingproxy.freeboard.io/fetch/https://ljz64d9w-3000.use.devtunnels.ms/getcomments")
     //let url = "https://corsproxy.io/?" + encodeURIComponent("https://s6htstwm-3000.use.devtunnels.ms/getcomments") // this one doesn't update for some reason?
-    let url = "https://s6htstwm-3000.use.devtunnels.ms/getcomments"
-    let commentdata = await fetch(url)
+    let url = "https://f24a-73-65-72-197.ngrok-free.app/getcomments"
+    let commentdata = await fetch(url,{
+        "headers": {
+            "ngrok-skip-browser-warning": true
+        }
+    })
     commentdata = await commentdata.text()
     commentdata = JSON.parse(commentdata).data
     console.log("New comment data:")
@@ -110,10 +114,14 @@ async function submitformandstuff(e) { // weird name to prevent accidentally ove
     toPost = new URLSearchParams(toPost).toString()
     //let toPostURL = `localhost:3000/${toPost}`
     //let toPostURL = "https://thingproxy.freeboard.io/fetch/" + `https://ljz64d9w-3000.use.devtunnels.ms/postcomment?${toPost}` // https://ljz64d9w-3000.use.devtunnels.ms/ Note to self: swap for other domain.
-    let toPostURL = `https://s6htstwm-3000.use.devtunnels.ms/postcomment?${toPost}`
+    let toPostURL = `https://f24a-73-65-72-197.ngrok-free.app/postcomment?${toPost}`
     console.log(`Sending comment to toPostURL`)
 
-    await fetch(toPostURL) // do the thing
+    await fetch(toPostURL,{
+        "headers": {
+            "ngrok-skip-browser-warning": true
+        }
+    }) // do the thing
     nameInput.value = ""
     commentstuff.value = ""
 
