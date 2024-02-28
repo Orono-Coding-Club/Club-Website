@@ -39,7 +39,7 @@
         speed: 20,
     };
 
-    playerMovement() {
+    function playerMovement() {
         document.onkeydown = function(e) {
             switch(e.keycode) {
                 case 37: 
@@ -60,7 +60,7 @@
         }
     }
     
-    draw() {
+    function draw() {
         ctx.clearRect(0,0,500,300);
 
         ctx.fillStyle = "white";
