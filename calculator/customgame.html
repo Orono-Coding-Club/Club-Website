@@ -45,11 +45,17 @@
     var player = {
         x: 10,
         y: 10,
+        px: 0,
+        py: 0,
         speed: 20,
     };
 
+    var colliders = [];
+
     function playerMovement() {
         document.onkeydown = function(e) {
+            player.px = player.x;
+            player.py = player.y;
             switch(e.keyCode) {
                 case 37: 
                     player.x -= player.speed;
@@ -79,6 +85,15 @@
         if(player.y > col.ymax) {
             player.y = col.ymax;
         }
+
+        for(var i = 0; i<colliders.length; i+=4) {
+            if(player.x>=colliders[i] && player.x<=colliders[i]+colliders[i+2]) {
+                player.x = player.px;
+            }
+            if(player.y>=colliders[i+1] && player.y<=colliders[i+1]+colliders[i+3]) {
+                player.y = player.py;
+            }
+        }
     }
     
     function draw() {
@@ -86,5 +101,15 @@
 
         ctx.fillStyle = "white";
         ctx.fillRect(player.x,player.y,18,18);
+        for(var i = 0; i<colliders.length; i+=4) {
+            ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
+        }
+    }
+
+    function createBox(x,y,w,h) {
+        colliders.push(x);
+        colliders.push(y);
+        colliders.push(w);
+        colliders.push(h);
     }
 </script>
