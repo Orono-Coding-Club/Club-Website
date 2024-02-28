@@ -1,0 +1,74 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orono Club Website Guest Book</title>
+    <link rel="icon" type="image/x-icon" href="./Assets/favicon-32x32.png">
+    <link href="./guestbook.css" rel="stylesheet">
+</head>
+
+<body>
+    <h2>Orono Club Website Guest Book</h2>
+
+    <nav> 
+        <a href="/index.html">
+            <figure>
+                <img src="/Assets/ClubLogo.png" alt="A redirect to the home page." id="home">
+                <figcaption>Home</figcaption>
+               </figure>
+        </a>
+    </nav>
+    <div id="spacer1"></div>
+
+    <!-- <form id="commentstuff">
+        <label for="username">Username (2 to 25 characters):</label>
+
+        <input type="text" id="username" name="username" required minlength="2" maxlength="25" size="10" />
+
+        <div id="spacer2"></div>
+
+        <label for="commentinput" id="commentinputlabel">Enter a comment!</label>
+        <textarea id="commentinput" name="w3review" rows="4" cols="50" minlength="2" maxlength="200" placeholder="your comment here" required></textarea>
+
+        <div id="spacer2"></div>
+
+        <input type="button" value="Post!">
+    </form> -->
+    <form id="commentstuff">
+
+        <div id="startDiv">
+            <label for="username">Username (2 to 25 characters):</label>
+
+            <input type="text" id="username" name="username" required minlength="2" maxlength="25" size="10" />
+
+            <div id="spacer2"></div>
+
+            <label for="commentinput" id="commentinputlabel">Enter a comment!</label>
+            <textarea id="commentinput" name="commentinput" rows="4" cols="50" minlength="2" maxlength="200" placeholder="your comment here" required></textarea>
+
+            <div id="spacer2"></div>
+            <button id="startButton">Post!</button>
+        </div>
+
+    </form>
+    <div id="warning">
+
+    </div>
+    
+    <div id="spacer1"></div>
+
+    <div id="comments">
+        <!-- <div id="comment1">
+            <img id="commentimage1" src="/Assets/person icon.svg">
+            <div id="commentspacer1"></div>
+            <h4 id="commentname1">Username, 2/8/24 6:19pm</h4>
+            <p id="commenttext1">super duper really extra mega long test text, even more test text wow so much text</p>
+            <div id="commentspacer1-2"></div>
+        </div> -->
+
+
+    </div>
+
+    <script src="./guestbook.js" type="module" defer></script>
+</body>
+</html>
