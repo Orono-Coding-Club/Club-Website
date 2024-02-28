@@ -9,6 +9,7 @@
 
 </head>
 <body>
+    <button onclick="start()">Start</button>
     <nav id="snakenav">
     <canvas id="canvas" width="500" height="300"></canvas>
         <a href="../index.html" alt="Home">
@@ -24,8 +25,10 @@
     c = document.getElementById('canvas');
     ctx = c.getContext('2d');
 
-    var movement = setInterval(playerMovement,1);
-    var drawing = setInterval(draw,10);
+    function start() {
+        var movement = setInterval(playerMovement,1);
+        var drawing = setInterval(draw,10);
+    }
     
     var player = {
         x: 10,
@@ -55,7 +58,7 @@
     }
     
     draw() {
-        ctx.clearRect(0,0,c.width,c.height);
+        ctx.clearRect(0,0,500,300);
 
         ctx.fillStyle = "white";
         ctx.fillRect(player.x,player.y,18,18);
