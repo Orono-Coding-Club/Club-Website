@@ -10,7 +10,7 @@
     <p>runs at 30fps!<br>running proper collision code since 28 February 2024</p>
     <button onclick="start()">Start</button>
     <nav id="snakenav">
-    <canvas id="canvas" width="500" height="300"></canvas>
+    <canvas id="canvas" width="1000" height="600"></canvas>
         <a href="../index.html" alt="Home">
             <img src="../Assets/ClubLogo.png" id="homepage">
         </a>
@@ -28,16 +28,16 @@
     var antiColliders = [];
     var roomNumber = 0;
 
-    createBox(30,30,50,50,0);
-    createAntiBox(30,50,40,20,0);
+    createBox(30,30,60,60,0);
+    createAntiBox(30,30,60,60,0);
     
     var movement;
     var drawing;
 
     var col = {
-        xmax: 470,
+        xmax: c.width - 50,
         xmin: 10,
-        ymax: 270,
+        ymax: c.height - 50,
         ymin: 10,
         
     };
@@ -52,8 +52,8 @@
         y: 10,
         px: 0,
         py: 0,
-        w: 20,
-        h: 20,
+        w: 40,
+        h: 40,
         speed: 20,
     };
 
@@ -118,19 +118,19 @@
     }
 
     function createBox(x,y,w,h,rm) {
-        while( (x - 10) % 20 != 0 ) {
+        while( (x - 10) % player.w != 0 ) {
             x++;
         }
 
-       while( (y - 10) % 20 != 0 ) {
+       while( (y - 10) % player.h != 0 ) {
             y++;
         }
         
-        while(w % 20 != 0) {
+        while(w % player.w != 0) {
             w++;
         }
 
-        while(h % 20 != 0) {
+        while(h % player.h != 0) {
             h++;
         }
         
@@ -142,6 +142,30 @@
     }
 
     function createAntiBox(x,y,w,h,rm) {
+        while( (x - 10) % player.w != 0 ) {
+            x++;
+        }
+
+       while( (y - 10) % player.h != 0 ) {
+            y++;
+        }
+        
+        while(w % player.w != 0) {
+            w++;
+        }
+
+        while(h % player.h != 0) {
+            h++;
+        }
+
+        antiColliders.push(x);
+        antiColliders.push(y);
+        antiColliders.push(w);
+        antiColliders.push(h);
+        antiColliders.push(rm);
+    }
+
+    function createDialogueBox(x,y,w,h,rm) {
         while( (x - 10) % 20 != 0 ) {
             x++;
         }
