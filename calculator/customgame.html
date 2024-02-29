@@ -27,8 +27,9 @@
     ctx = c.getContext('2d');
 
     var colliders = [];
+    var roomNumber = 0;
 
-    createBox(30,30,50,50);
+    createBox(30,30,50,50,0);
     
     var movement;
     var drawing;
@@ -82,8 +83,8 @@
             player.y = player.py;
         }
 
-        for(var i = 0; i<colliders.length; i+=4) {
-            if(player.x>=colliders[i] && player.x<colliders[i]+colliders[i+2] && player.y>=colliders[i+1] && player.y<colliders[i+1]+colliders[i+3]) {
+        for(var i = 0; i<colliders.length; i+=5) {
+            if(player.x>=colliders[i] && player.x<colliders[i]+colliders[i+2] && player.y>=colliders[i+1] && player.y<colliders[i+1]+colliders[i+3] && colliders[i+4] == roomNumber) {
                 player.x = player.px;
                 player.y = player.py;
             }
@@ -95,12 +96,14 @@
 
         ctx.fillStyle = "white";
         ctx.fillRect(player.x,player.y,player.w,player.h);
-        for(var i = 0; i<colliders.length; i+=4) {
-            ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
+        for(var i = 0; i<colliders.length; i+=5) {
+            if(colliders[i+4] == roomNumber) {
+                ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
+            }
         }
     }
 
-    function createBox(x,y,w,h) {
+    function createBox(x,y,w,h,rm) {
         while( (x - 10) % 20 != 0 ) {
             x++;
         }
@@ -121,5 +124,6 @@
         colliders.push(y);
         colliders.push(w);
         colliders.push(h);
+        colliders.push(rm);
     }
 </script>
