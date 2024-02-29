@@ -27,6 +27,7 @@
     ctx = c.getContext('2d');
 
     var colliders = [];
+    var antiColliders = [];
     var roomNumber = 0;
 
     createBox(30,30,50,50,0);
@@ -85,8 +86,12 @@
 
         for(var i = 0; i<colliders.length; i+=5) {
             if(player.x>=colliders[i] && player.x<colliders[i]+colliders[i+2] && player.y>=colliders[i+1] && player.y<colliders[i+1]+colliders[i+3] && colliders[i+4] == roomNumber) {
-                player.x = player.px;
-                player.y = player.py;
+                if(player.x>=antiColliders[i] && player.x<antColliders[i]+antiColliders[i+2] && player.y>=antiColliders[i+1] && player.y<antiColliders[i+1]+antiColliders[i+3] && antiColliders[i+4]) {
+                    
+                } else {
+                    player.x = player.px;
+                    player.y = player.py;
+                }
             }
         }
     }
@@ -99,6 +104,14 @@
         for(var i = 0; i<colliders.length; i+=5) {
             if(colliders[i+4] == roomNumber) {
                 ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
+            }
+        }
+
+        ctx.fillStyle = "black";
+        
+        for(var i = 0; i<antiColliders.length; i+=5) {
+            if(antiColliders[i+4] == roomNumber) {
+                ctx.fillRect(antiColliders[i],antiColliders[i+1],antiColliders[i+2],antiColliders[i+3]);
             }
         }
     }
@@ -125,5 +138,29 @@
         colliders.push(w);
         colliders.push(h);
         colliders.push(rm);
+    }
+
+    function createAntiBox(x,y,w,h,rm) {
+        while( (x - 10) % 20 != 0 ) {
+            x++;
+        }
+
+       while( (y - 10) % 20 != 0 ) {
+            y++;
+        }
+        
+        while(w % 20 != 0) {
+            w++;
+        }
+
+        while(h % 20 != 0) {
+            h++;
+        }
+
+        antiColliders.push(x);
+        antiColliders.push(y);
+        antiColliders.push(w);
+        antiColliders.push(h);
+        antiColliders.push(rm);
     }
 </script>
