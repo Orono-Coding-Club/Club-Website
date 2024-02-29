@@ -26,6 +26,8 @@
     c = document.getElementById('canvas');
     ctx = c.getContext('2d');
 
+    var colliders = [];
+    
     var movement;
     var drawing;
 
@@ -49,8 +51,6 @@
         py: 0,
         speed: 20,
     };
-
-    var colliders = [];
 
     function playerMovement() {
         document.onkeydown = function(e) {
