@@ -51,6 +51,8 @@
         y: 10,
         px: 0,
         py: 0,
+        w: 20,
+        h: 20,
         speed: 20,
     };
 
@@ -100,13 +102,29 @@
         ctx.clearRect(0,0,500,300);
 
         ctx.fillStyle = "white";
-        ctx.fillRect(player.x,player.y,18,18);
+        ctx.fillRect(player.x,player.y,player.w,player.h);
         for(var i = 0; i<colliders.length; i+=4) {
             ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
         }
     }
 
     function createBox(x,y,w,h) {
+        while( (x - 10) % 20 != 0 ) {
+            x++;
+        }
+
+       while( (y - 10) % 20 != 0 ) {
+            y++;
+        }
+        
+        while( (w - 10) % 20 != 0 ) {
+            w++;
+        }
+
+        while( (h - 10) % 20 != 0 ) {
+            h++;
+        }
+        
         colliders.push(x);
         colliders.push(y);
         colliders.push(w);
