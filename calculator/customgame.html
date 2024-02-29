@@ -77,17 +77,9 @@
                     break;
             }
         };
-        if(player.x < col.xmin) {
-            player.x = col.xmin;
-        }
-        if(player.x > col.xmax) {
-            player.x = col.xmax;
-        }
-        if(player.y < col.ymin) {
-            player.y = col.ymin;
-        }
-        if(player.y > col.ymax) {
-            player.y = col.ymax;
+        if(player.x < col.xmin || player.x > col.xmax || player.y < col.ymin || player.y > col.ymax) {
+            player.x = player.px;
+            player.y = player.py;
         }
 
         for(var i = 0; i<colliders.length; i+=4) {
