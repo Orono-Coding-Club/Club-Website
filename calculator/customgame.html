@@ -7,7 +7,7 @@
     <link href="./styles.css" rel="stylesheet">
 </head>
 <body>
-    <p>runs at 30fps!<br>running proper collision code since 28 February 2024</p>
+    <p>runs at 20fps!<br>running proper collision code since 28 February 2024</p>
     <button onclick="start()">Start</button>
     <nav id="snakenav">
     <canvas id="canvas" width="1000" height="600"></canvas>
@@ -23,27 +23,30 @@
 <script>
     c = document.getElementById('canvas');
     ctx = c.getContext('2d');
-
-    var canvasWidth = c.width;
-    var canvasHeight = c.height;
     
     var colliders = [];
     var antiColliders = [];
+    var dialogueColliders = [];
     var roomNumber = 0;
+    var dialogueId = "";
+    var doDialogue = false;
+    var dialogueText = [];
+    var dialogueStep = 0;
 
-    createBox(30,30,60,60,0);
-    createAntiBox(30,30,60,60,0);
+    var pwidth = 40;
+    var pheight = 40;
+
+    createBox(-80,-80,1160,80,-1);
+    createBox(-80,-80,80,760,-1);
+    createBox(1000,-80,80,760,-1);
+    createBox(-80,600,1160,80,-1);
+
+    createBox(40,40,120,120,0);
+    createAntiBox(40,80,80,40,0);
+    createDialogueBox(40,40,160,160,0,"squareDialogue");
     
     var movement;
     var drawing;
-
-    var col = {
-        xmax: canvasWidth - 50,
-        xmin: 10,
-        ymax: canvasHeight - 50,
-        ymin: 10,
-        
-    };
 
     function start() {
         movement = setInterval(playerMovement,1);
@@ -51,57 +54,130 @@
     }
     
     var player = {
-        x: 10,
-        y: 10,
+        x: 0,
+        y: 0,
         px: 0,
         py: 0,
-        w: 40,
-        h: 40,
+        px2: 0,
+        py2: 0,
+        width: pwidth,
+        height: pheight,
         speed: 40,
+        xMoveHistory: 0,
+        yMoveHistory: 0,
     };
 
     function playerMovement() {
         document.onkeydown = function(e) {
+            // Set up movement history for fixing faulty collision
             player.px = player.x;
             player.py = player.y;
+            player.px2 = player.x - player.xMoveHistory;
+            player.py2 = player.y - player.yMoveHistory;
+            
+            // Check for player input for dialogue
             switch(e.keyCode) {
-                case 37: 
-                    player.x -= player.speed;
-                    break; 
-                case 38: 
-                    player.y -= player.speed;
-                    break; 
-                case 39: 
-                    player.x += player.speed;
-                    break; 
-                case 40: 
-                    player.y += player.speed;
+                case 13:
+                    if(doDialogue == true && dialogueStep + 1 != dialogueText.length) {
+                        dialogueStep++;
+                    } else if(dialogueStep + 1 == dialogueText.length) {
+                        dialogueStep = 0;
+                        doDialogue = false;
+                        break;
+                    }
+                    dialogue();
+                    break;
+                case 16:
+                    dialogueStep = 0;
+                    doDialogue = false;
                     break;
                 default:
                     break;
             }
-        };
-        if(player.x < col.xmin || player.x > col.xmax || player.y < col.ymin || player.y > col.ymax) {
-            player.x = player.px;
-            player.y = player.py;
-        }
 
+            // Check for player input for movement
+            if(doDialogue == false) {
+            switch(e.keyCode) {
+                case 37: 
+                    player.x -= player.speed;
+                    player.xMoveHistory = -player.speed;
+                    player.yMoveHistory = 0;
+                    break; 
+                case 38: 
+                    player.y -= player.speed;
+                    player.yMoveHistory = -player.speed;
+                    player.xMoveHistory = 0;
+                    break; 
+                case 39: 
+                    player.x += player.speed;
+                    player.xMoveHistory = player.speed;
+                    player.yMoveHistory = 0;
+                    break; 
+                case 40: 
+                    player.y += player.speed;
+                    player.yMoveHistory = player.speed;
+                    player.xMoveHistory = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
+        };
+
+        // Check for player collision against boxes and antiBoxes
         for(var i = 0; i<colliders.length; i+=5) {
-            if(player.x>=colliders[i] && player.x<colliders[i]+colliders[i+2] && player.y>=colliders[i+1] && player.y<colliders[i+1]+colliders[i+3] && colliders[i+4] == roomNumber) {
+            if(player.x>=colliders[i] && player.x<colliders[i]+colliders[i+2] && player.y>=colliders[i+1] && player.y<colliders[i+1]+colliders[i+3] && (colliders[i+4] == roomNumber || colliders[i+4] == -1)) {
+                antiBoxDetection("x");
+            }
+            if(player.px>=colliders[i] && player.px<colliders[i]+colliders[i+2] && player.py>=colliders[i+1] && player.py<colliders[i+1]+colliders[i+3] && (colliders[i+4] == roomNumber  || colliders[i+4] == -1)) {
+                antiBoxDetection("px");
+            }
+        }
+    }
+
+    function dialogue() {
+        for(var i = 0; i<dialogueColliders.length; i+=6) {
+            if(player.x>=dialogueColliders[i] && player.x<dialogueColliders[i]+dialogueColliders[i+2] && player.y>=dialogueColliders[i+1] && player.y<dialogueColliders[i+1]+dialogueColliders[i+3] && dialogueColliders[i+4] == roomNumber) {
+                dialogueId = dialogueColliders[i+5];
+                doDialogue = true;
+                switch(dialogueId) {
+                    case "squareDialogue":
+                        dialogueText = ["It's a square.","You try to push it.","Nothing happens."];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }    
+
+    function antiBoxDetection(source) {
+        if(source == "x") {
+            for(var i = 0; i<antiColliders.length; i+=5) {
                 if(player.x>=antiColliders[i] && player.x<antiColliders[i]+antiColliders[i+2] && player.y>=antiColliders[i+1] && player.y<antiColliders[i+1]+antiColliders[i+3] && antiColliders[i+4] == roomNumber) {
+                        
+                    } else {
+                        player.x = player.px;
+                        player.y = player.py;
+                    }
+            }
+        } else {
+            for(var i = 0; i<antiColliders.length; i+=5) {
+            if(player.px>=antiColliders[i] && player.px<antiColliders[i]+antiColliders[i+2] && player.py>=antiColliders[i+1] && player.py<antiColliders[i+1]+antiColliders[i+3] && antiColliders[i+4] == roomNumber) {
                     
                 } else {
-                    player.x = player.px;
-                    player.y = player.py;
+                    player.x = player.px2;
+                    player.y = player.py2;
                 }
             }
         }
     }
     
     function draw() {
-        ctx.clearRect(0,0,canvasWidth,canvasHeight);
+        ctx.clearRect(0,0,c.width,c.height);
 
         ctx.fillStyle = "white";
+        ctx.strokeStyle = "white";
         for(var i = 0; i<colliders.length; i+=5) {
             if(colliders[i+4] == roomNumber) {
                 ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
@@ -116,24 +192,32 @@
             }
         }
 
-        ctx.fillStyle = "red"
-        ctx.fillRect(player.x,player.y,player.w,player.h);
+        ctx.fillStyle = "red";
+        ctx.fillRect(player.x,player.y,pwidth,pheight);
+
+        if(doDialogue == true) {
+            ctx.fillStyle = "white";
+            ctx.font = "30px Arial";
+            ctx.lineWidth = 10;
+            ctx.strokeRect(100,400,800,150);
+            ctx.fillText("* " + dialogueText[dialogueStep],120,440);
+        }
     }
 
     function createBox(x,y,w,h,rm) {
-        while( (x - 10) % player.w != 0 ) {
+        while( (x % pwidth) != 0 ) {
             x++;
         }
 
-       while( (y - 10) % player.h != 0 ) {
+       while( (y % pheight) != 0 ) {
             y++;
         }
         
-        while(w % player.w != 0) {
+        while((w % pwidth) != 0) {
             w++;
         }
 
-        while(h % player.h != 0) {
+        while((h % pheight) != 0) {
             h++;
         }
         
@@ -145,19 +229,19 @@
     }
 
     function createAntiBox(x,y,w,h,rm) {
-        while( (x - 10) % player.w != 0 ) {
+        while( x % pwidth != 0 ) {
             x++;
         }
 
-       while( (y - 10) % player.h != 0 ) {
+       while( y % pheight != 0 ) {
             y++;
         }
         
-        while(w % player.w != 0) {
+        while(w % pwidth != 0) {
             w++;
         }
 
-        while(h % player.h != 0) {
+        while(h % pheight != 0) {
             h++;
         }
 
@@ -168,27 +252,28 @@
         antiColliders.push(rm);
     }
 
-    function createDialogueBox(x,y,w,h,rm) {
-        while( (x - 10) % 20 != 0 ) {
+    function createDialogueBox(x,y,w,h,rm,id) {
+        while( x % pwidth != 0 ) {
             x++;
         }
 
-       while( (y - 10) % 20 != 0 ) {
+       while( y % pheight != 0 ) {
             y++;
         }
         
-        while(w % 20 != 0) {
+        while(w % pwidth != 0) {
             w++;
         }
 
-        while(h % 20 != 0) {
+        while(h % pheight != 0) {
             h++;
         }
 
-        antiColliders.push(x);
-        antiColliders.push(y);
-        antiColliders.push(w);
-        antiColliders.push(h);
-        antiColliders.push(rm);
+        dialogueColliders.push(x);
+        dialogueColliders.push(y);
+        dialogueColliders.push(w);
+        dialogueColliders.push(h);
+        dialogueColliders.push(rm);
+        dialogueColliders.push(id);
     }
 </script>
