@@ -101,7 +101,6 @@
         ctx.clearRect(0,0,500,300);
 
         ctx.fillStyle = "white";
-        ctx.fillRect(player.x,player.y,player.w,player.h);
         for(var i = 0; i<colliders.length; i+=5) {
             if(colliders[i+4] == roomNumber) {
                 ctx.fillRect(colliders[i],colliders[i+1],colliders[i+2],colliders[i+3]);
@@ -115,6 +114,9 @@
                 ctx.fillRect(antiColliders[i],antiColliders[i+1],antiColliders[i+2],antiColliders[i+3]);
             }
         }
+
+        ctx.fillStyle = "white"
+        ctx.fillRect(player.x,player.y,player.w,player.h);
     }
 
     function createBox(x,y,w,h,rm) {
