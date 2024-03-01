@@ -313,7 +313,6 @@
         if(doDialogue == true) {
             setTimeout(function() {
                 dialogueTextTemp += dialogueText[dialogueStep].charAt(dialogueTextStep);
-                ctx.clearRect(0,0,c.width,c.height);
                 ctx.fillText("* " + dialogueTextTemp,dialogueBoxX + 20,dialogueBoxY + 40);
                 if(dialogueTextStep < dialogueText[dialogueStep].length) {
                     dialogueTextStep++;
