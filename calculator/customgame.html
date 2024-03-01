@@ -30,22 +30,26 @@
     var doDialogue = false;
     var dialogueText = [];
     var dialogueStep = 0;
+    var dialogueTextTemp = "";
     var hitAntiBox = false;
     var hitAntiDialogueBox = false;
+    var dialogueTextStep = 0;
 
-    var dialogueBoxX = 0;
-    var dialgoueBoxY = 0;
-    var dialogueBoxW = 0;
-    var dialogueBoxH = 0;
+    var dialogueBoxX = c.width * .1;
+    var dialogueBoxY = c.height * .5;
+    var dialogueBoxW = c.width * .8;
+    var dialogueBoxH = c.height * .4;
+
+    
 
     var pwidth = 40;
     var pheight = 40;
 
     // Create 4 border walls to prevent player from leaving canvas area
-    createBox(-80,-80,c.width + 160,80,-1);
-    createBox(-80,-80,80,c.height + 160,-1);
-    createBox(c.width,-80,80,c.height + 160,-1);
-    createBox(-80,c.height,c.width + 160,80,-1);
+    createBox(-80,-120,c.width + 160,80,-1);
+    createBox(-120,-80,80,c.height + 160,-1);
+    createBox(c.width+40,-80,80,c.height + 160,-1);
+    createBox(-80,c.height+40,c.width + 160,80,-1);
 
     createBox(40,40,120,120,0);
     createAntiBox(40,80,80,40,0);
@@ -56,10 +60,12 @@
     createDialogueBox(360,80,280,280,0,["It's another square.","You don't try to push it."]);
     createAntiDialogueBox(360,80,160,160,0);
 
-    createRoomBox(760,0,40,400,0,1,"right");
-    createRoomBox(0,360,800,40,0,2,"down");
-    createRoomBox(0,0,40,400,1,0,"left");
-    createRoomBox(0,0,800,400,2,0,"up");
+    createRoomBox(800,0,40,400,0,1,"right");
+    createRoomBox(0,400,800,40,0,2,"down");
+    createRoomBox(-40,0,40,400,1,0,"left");
+    createRoomBox(0,-40,800,40,2,0,"up");
+    createRoomBox(0,-40,800,40,0,3,"up");
+    createRoomBox(0,400,800,40,3,0,"down");
 
     var movement;
     var drawing;
@@ -67,6 +73,7 @@
     function start() {
         movement = setInterval(playerMovement,1);
         drawing = setInterval(draw,1);
+        drawingGUI = setInterval(drawGUI,100);
     }
     
     var player = {
@@ -94,16 +101,23 @@
             // Check for player input for dialogue
             switch(e.keyCode) {
                 case 13:
+                    ctx.clearRect(dialogueBoxX,dialogueBoxY,dialogueBoxW,dialogueBoxH);
                     if(doDialogue == true && dialogueStep + 1 != dialogueText.length) {
                         dialogueStep++;
+                        dialogueTextStep = 0;
                     } else if(dialogueStep + 1 == dialogueText.length) {
                         dialogueStep = 0;
+                        dialogueTextStep = 0;
                         doDialogue = false;
                         break;
+                    } else if(doDialogue == false) {
+                        dialogueTextStep = 0;
+                        dialogueStep = 0;
                     }
                     dialogue();
                     break;
                 case 16:
+                    dialogueDrawStep = 0;
                     dialogueStep = 0;
                     doDialogue = false;
                     break;
@@ -156,16 +170,16 @@
                 roomNumber = roomColliders[i+5];
                 switch(roomColliders[i+6]) {
                     case "right":
-                        player.x = 40;
+                        player.x = 0;
                         break;
                     case "left":
-                        player.x = 720;
+                        player.x = 760;
                         break;
                     case "up":
-                        player.y = 320;
+                        player.y = 360;
                         break;
                     case "down":
-                        player.y = 40;
+                        player.y = 0;
                         break;
                     default:
                         break;
@@ -176,6 +190,8 @@
     }
 
     function dialogue() {
+        dialogueDrawStep = 0;
+        dialogueTextTemp = "";
         hitAntiDialogueBox = false;
         for(var i = 0; i<antiDialogueColliders.length; i+=5) {
             if(player.x>=antiDialogueColliders[i] && player.x<antiDialogueColliders[i]+antiDialogueColliders[i+2] && player.y>=antiDialogueColliders[i+1] && player.y<antiDialogueColliders[i+1]+antiDialogueColliders[i+3] && antiDialogueColliders[i+4] == roomNumber) {
@@ -223,6 +239,10 @@
     }
     
     function draw() {
+        if(doDialogue == true) {
+            return;
+        }            
+        
         ctx.clearRect(0,0,c.width,c.height);
 
         // Draw boxes
@@ -271,20 +291,34 @@
         ctx.fillStyle = "white";
         ctx.font = "20px Arial";
         ctx.fillText("Blue boxes contain dialogue, cyan boxes restrict dialogue",10,c.height-10);
+    }
 
-        // Draw the dialogue box
+    function drawGUI() {
+        // Draw dialogue
         if(doDialogue == true) {
+            if(dialogueTextStep == 0) {
+                ctx.clearRect(dialogueBoxX,dialogueBoxY,dialogueBoxW,dialogueBoxH);
+            }
             ctx.font = "30px Arial";
             ctx.strokeStyle = "white";
-            dialogueBoxX = c.width * .1;
-            dialogueBoxY = c.height * .5;
-            dialogueBoxW = c.width * .8;
-            dialogueBoxH = c.height * .4;
-            ctx.clearRect(dialogueBoxX,dialogueBoxY,dialogueBoxW,dialogueBoxH);
             ctx.fillStyle = "white";
             ctx.lineWidth = 10;
             ctx.strokeRect(dialogueBoxX,dialogueBoxY,dialogueBoxW,dialogueBoxH);
-            ctx.fillText("* " + dialogueText[dialogueStep],dialogueBoxX + 20,dialogueBoxY + 40);
+            drawDialogueText();
+        }
+    }
+
+    function drawDialogueText() {
+        // Draw dialogue text
+        if(doDialogue == true) {
+            setTimeout(function() {
+                dialogueTextTemp += dialogueText[dialogueStep].charAt(dialogueTextStep);
+                ctx.fillText("* " + dialogueTextTemp,dialogueBoxX + 20,dialogueBoxY + 40);
+                if(dialogueTextStep < dialogueText[dialogueStep].length) {
+                    dialogueTextStep++;
+                    drawDialogueText();
+                }
+            }, 50);
         }
     }
 
@@ -409,5 +443,9 @@
         roomColliders.push(rm);
         roomColliders.push(rmto);
         roomColliders.push(pos);
+    }
+
+    function checkCollision() {
+        
     }
 </script>
