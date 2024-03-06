@@ -16,7 +16,6 @@
         <a href="./main.html" alt="Calculator">Calculator page</a>
     </nav>
 </body>
-</html>
 <script>
     c = document.getElementById('canvas');
     ctx = c.getContext('2d');
@@ -201,6 +200,8 @@
         if(hitAntiDialogueBox == false) {
             for(var i = 0; i<dialogueColliders.length; i++) {
                 var arrayObject = dialogueColliders[i];
+                var tester = arrayObject[6];
+                var tester2 = tester[0];
                 if(player.x>=arrayObject[0] && player.x<arrayObject[0]+arrayObject[2] && player.y>=arrayObject[1] && player.y<arrayObject[1]+arrayObject[3] && arrayObject[4] == roomNumber) {
                     doDialogue = true;
                     if(arrayObject[7] == 0) {
@@ -209,7 +210,7 @@
                         var afterText = arrayObject[6];
                         dialogueText = afterText[arrayObject[7]-1];
                     }
-                    if(arrayObject[7]<arrayObject[6].length) {
+                    if(arrayObject[7]<arrayObject[6].length && tester2[0] != "p") {
                         arrayObject[7]++;
                     }
                 }
@@ -321,6 +322,11 @@
     function drawDialogueText() {
         // Draw dialogue text
         if(doDialogue == true) {
+            if(dialogueText[dialogueStep] == "") {
+                dialogueStep = 0;
+                dialogueTextStep = 0;
+                doDialogue = false;
+            }
             setTimeout(function() {
                 dialogueTextTemp += dialogueText[dialogueStep].charAt(dialogueTextStep);
                 ctx.fillText("* " + dialogueTextTemp,dialogueBoxX + 20,dialogueBoxY + 40);
@@ -383,12 +389,20 @@
     function createDialogueBox(x,y,w,h,rm,text,afterText) {
         var arrayObject = [];
         var interactCount = 0;
+
+        if(arguments[6] === undefined) {
+            afterText = [["p"]];
+        }
+
+        for(var i = 0; i<afterText.length; i++) {
+            afterText[i].push("");
+        }
         
-        while( x % pwidth != 0 ) {
+        while(x % pwidth != 0 ) {
             x++;
         }
 
-       while( y % pheight != 0 ) {
+        while(y % pheight != 0 ) {
             y++;
         }
         
@@ -465,3 +479,4 @@
         
     }
 </script>
+</html>
