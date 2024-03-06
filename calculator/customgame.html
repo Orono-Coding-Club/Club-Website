@@ -53,7 +53,7 @@
 
     createBox(40,40,120,120,0);
     createAntiBox(40,80,80,40,0);
-    createDialogueBox(40,40,160,160,0,["It's a square.","You try to push it.","Nothing happens."]);
+    createDialogueBox(40,40,160,160,0,["It's a square.","You try to push it.","Nothing happens."],[["..."],["Why are you still doing this?"]]);
 
     createBox(400,120,200,200,0);
     createAntiBox(400,120,160,160,0);
@@ -101,6 +101,9 @@
             // Check for player input for dialogue
             switch(e.keyCode) {
                 case 13:
+                    dialogueDrawStep = 0;
+                    dialogueTextTemp = "";
+                    hitAntiDialogueBox = false;
                     ctx.clearRect(dialogueBoxX,dialogueBoxY,dialogueBoxW,dialogueBoxH);
                     if(doDialogue == true && dialogueStep + 1 != dialogueText.length) {
                         dialogueStep++;
@@ -113,8 +116,8 @@
                     } else if(doDialogue == false) {
                         dialogueTextStep = 0;
                         dialogueStep = 0;
+                        dialogue();
                     }
-                    dialogue();
                     break;
                 case 16:
                     dialogueDrawStep = 0;
@@ -190,19 +193,25 @@
     }
 
     function dialogue() {
-        dialogueDrawStep = 0;
-        dialogueTextTemp = "";
-        hitAntiDialogueBox = false;
         for(var i = 0; i<antiDialogueColliders.length; i+=5) {
             if(player.x>=antiDialogueColliders[i] && player.x<antiDialogueColliders[i]+antiDialogueColliders[i+2] && player.y>=antiDialogueColliders[i+1] && player.y<antiDialogueColliders[i+1]+antiDialogueColliders[i+3] && antiDialogueColliders[i+4] == roomNumber) {
                 hitAntiDialogueBox = true;
             }
         }
         if(hitAntiDialogueBox == false) {
-            for(var i = 0; i<dialogueColliders.length; i+=6) {
-                if(player.x>=dialogueColliders[i] && player.x<dialogueColliders[i]+dialogueColliders[i+2] && player.y>=dialogueColliders[i+1] && player.y<dialogueColliders[i+1]+dialogueColliders[i+3] && dialogueColliders[i+4] == roomNumber) {
+            for(var i = 0; i<dialogueColliders.length; i++) {
+                var arrayObject = dialogueColliders[i];
+                if(player.x>=arrayObject[0] && player.x<arrayObject[0]+arrayObject[2] && player.y>=arrayObject[1] && player.y<arrayObject[1]+arrayObject[3] && arrayObject[4] == roomNumber) {
                     doDialogue = true;
-                    dialogueText = dialogueColliders[i+5];
+                    if(arrayObject[7] == 0) {
+                        dialogueText = arrayObject[5];
+                    } else {
+                        var afterText = arrayObject[6];
+                        dialogueText = afterText[arrayObject[7]-1];
+                    }
+                    if(arrayObject[7]<arrayObject[6].length) {
+                        arrayObject[7]++;
+                    }
                 }
             }
         }
@@ -270,9 +279,10 @@
         // Draw dialogue box collisions and room box collisions (for debugging)
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
-        for(var i = 0; i<dialogueColliders.length; i+=6) {
-            if(dialogueColliders[i+4] == roomNumber) {
-                ctx.strokeRect(dialogueColliders[i],dialogueColliders[i+1],dialogueColliders[i+2],dialogueColliders[i+3]);
+        for(var i = 0; i<dialogueColliders.length; i++) {
+            var arrayObject = dialogueColliders[i];
+            if(arrayObject[4] == roomNumber) {
+                ctx.strokeRect(arrayObject[0],arrayObject[1],arrayObject[2],arrayObject[3]);
             }
         }
         ctx.strokeStyle = "cyan";
@@ -370,7 +380,10 @@
         antiColliders.push(rm);
     }
 
-    function createDialogueBox(x,y,w,h,rm,text) {
+    function createDialogueBox(x,y,w,h,rm,text,afterText) {
+        var arrayObject = [];
+        var interactCount = 0;
+        
         while( x % pwidth != 0 ) {
             x++;
         }
@@ -387,12 +400,15 @@
             h++;
         }
 
-        dialogueColliders.push(x);
-        dialogueColliders.push(y);
-        dialogueColliders.push(w);
-        dialogueColliders.push(h);
-        dialogueColliders.push(rm);
-        dialogueColliders.push(text);
+        arrayObject.push(x);
+        arrayObject.push(y);
+        arrayObject.push(w);
+        arrayObject.push(h);
+        arrayObject.push(rm);
+        arrayObject.push(text);
+        arrayObject.push(afterText);
+        arrayObject.push(interactCount);
+        dialogueColliders.push(arrayObject);
     }
 
     function createAntiDialogueBox(x,y,w,h,rm) {
