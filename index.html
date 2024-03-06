@@ -1,7 +1,6 @@
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta>
     <title>Orono Coding Club</title>
     <link rel="icon" type="image/x-icon" href="Assets/favicon-32x32.png">
     <link href="./styles.css" rel="stylesheet">
@@ -13,15 +12,31 @@
   <img src="./Assets/ClubLogo.png" alt="The club banner" id="clubBanner" class="logo">
   <p class="p" id="headertitle">Orono Coding Club Website</p>  
   <div class="header-right">
+    
     <a class="active" href="#home">Home</a>
     <a href="#contact">Contact</a>
     <a href="#about">About</a>
+    <div class="dropdown">
+    <button onclick="myFunction()" class="dropbtn">Member Pages</button>
+    <div id="myDropdown" class="dropdown-content">
+        <a href="#AlexPage">Alex's Page</a>
+        <a href="./Jem/Jem.html">Jem's Page</a>
+        <a href="./Zack/Zack.html">Zach's Page</a>
+    </div>
+    </div>
+    <div class="dropdown">
+      <button onclick="myFunction()" class="dropbtn">Projects!</button>
+      <div id="myDropdown" class="dropdown-content">
+          <a href="#AlexPage">Jem's SNAKE</a>
+      </div>
+      </div>
+    
+    
   </div>
 </div> 
   <a id="home">
     <h1>Home Page</h1>
-  <img src="./Assets/ClubLogo.png" alt="The club banner" id="clubBanner">
-  <p class="p">Welcome to the Orono Coding Club website!<br>The best website since November 15, 2023!</p>
+  <p class="p">Welcome to the Orono Coding Club website!</p>
 
   <nav>
     <div>
@@ -33,17 +48,11 @@
 
 
     <div>
-      <a href="./Pages/guestbook.html">
-        <img src="./Assets/guestbook.png" alt="Link to the guestbook" id="PlaceholderPage">
+      <a href="./placeholder.html">
+        <img src="./Assets/placeholder.png" alt="Placeholder page banner" id="PlaceholderPage">
       </a>
     </div>
     <!-- someone can replace this with their page's stuff when needed, i'm just trying to make it easier-->
-
-    <div>
-        <a href="./Jem/Jem.html">
-            <img src="./Assets/Jem's page banner.png" alt="Jem's page banner" id="JemPage">
-        </a>
-    </div>
 
     <div>
         <a href="./calculator/main.html">
@@ -75,5 +84,26 @@
       </a>
   </div>
   
+
+<!--JavaScript codes below-->
+
+<script>
+  /* When the user clicks on the button, 
+  toggle between hiding and showing the dropdown content */
+  function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+  
+  // Close the dropdown if the user clicks outside of it
+  window.onclick = function(e) {
+    if (!e.target.matches('.dropbtn')) {
+    var myDropdown = document.getElementById("myDropdown");
+      if (myDropdown.classList.contains('show')) {
+        myDropdown.classList.remove('show');
+      }
+    }
+  }
+  </script>
+
 </body>
 </html>
