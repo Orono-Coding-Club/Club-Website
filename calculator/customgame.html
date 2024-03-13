@@ -199,7 +199,7 @@
         checkRoomCollision(movableColliders,movableColliders,"movablebox");
 
         // Check for player collision against movable boxes
-        for(var i = 0; i<movableColliders.length; i+=7) {
+        for(var i = 0; i<movableColliders.length; i+=8) {
             if(player.x>=movableColliders[i] && player.x<movableColliders[i]+movableColliders[i+2] && player.y>=movableColliders[i+1] && player.y<movableColliders[i+1]+movableColliders[i+3] && (movableColliders[i+4] == roomNumber || movableColliders[i+4] == -1)) {
                 switch(movementHistory) {
                     case "right":
@@ -335,7 +335,7 @@
 
         // Draw movable boxes
         ctx.fillStyle = "orange";
-        for(var i = 0; i<movableColliders.length; i+=7) {
+        for(var i = 0; i<movableColliders.length; i+=8) {
             if(movableColliders[i+4] == roomNumber) {
                 ctx.fillRect(movableColliders[i],movableColliders[i+1],movableColliders[i+2],movableColliders[i+3])
             }
@@ -562,6 +562,7 @@
         movableColliders.push(rm);
         movableColliders.push(x);
         movableColliders.push(y);
+        movableColliders.push(rm);
     }
 
     function checkRoomCollision(objectx,objecty,object) {
@@ -571,7 +572,7 @@
             case "player":
                 break;
             case "movablebox":
-                step = 7;
+                step = 8;
                 break;
         }
         for(var i = 0; i<roomColliders.length; i+=7) {
