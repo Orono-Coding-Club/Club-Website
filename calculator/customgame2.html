@@ -57,7 +57,7 @@
     createBox(400,200,120,40);
     createBox(700,200,100,400);
     createBox(0,300,40,40);
-    createAutoDialogueBox(10,90,200,50,["carson cajackled","carrie cacakled"]);
+    createAutoDialogueBox(10,90,200,50,["hello","welcome to customgame2","it's like customgame, but with physics"]);
 
     createBox(0, c.height, 10000000, 40);
     createBox(-40, 0, 40, c.height);
@@ -335,19 +335,11 @@
             ctx.lineWidth = 10;
             ctx.strokeStyle = "white";
             ctx.fillStyle = "white";
-            ctx.strokeRect(50,250,900,125);
             textArray = currentDialogueObject[4];
-            while(dialogueCharStep < textArray[currentDialogueObject[5]].length) {
-                setTimeout(drawDialogue, dialogueCharStep * 75);
-                dialogueCharStep++;
-            }
+            ctx.clearRect(50,250,900,125);
+            ctx.strokeRect(50,250,900,125);
+            ctx.fillText("* " + textArray[currentDialogueObject[5]], 60,285);
         }
-    }
-
-    function drawDialogue() {
-        ctx.clearRect(50,250,900,125);
-        dialogueTextTemp += textArray[currentDialogueObject[5]].charAt(dialogueCharStep);
-        ctx.fillText("* " + dialogueTextTemp, 60,285);
     }
     
     function createBox(x, y, w, h) {
