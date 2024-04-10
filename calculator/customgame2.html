@@ -1,0 +1,360 @@
+<html>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="../Assets/favicon-32x32.png">
+    <title>play customgame2</title>
+    <p>customgame2: created 2024 March 26</p>
+    <canvas id="canvas" width="1000" height="400"></canvas>
+    <br>
+    <button onclick="start()">Start customgame2</button>
+    <a href="main.html">Calculator page</a>
+    <a href="../index.html">Home page</a>
+</html>
+<script>
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    var drawInterval;
+    var playerMovementInterval;
+    var colliders = [];
+    var playerpieces = [];
+    var autodialogues = [];
+    var currentDialogueObject;
+    var dialogueTextTemp = "";
+    var textArray;
+    var dialogueCount = 0;
+    var dialogueCharStep = 0;
+
+    var gameStarted = false;
+    var player = {
+        x: 50,
+        y: 20,
+        w: 30,
+        h: 20,
+        velox: 0,
+        veloy: 0,
+        velog: 0,
+        accelx: 0,
+        accely: 0,
+        gravity: 2,
+        t: 0,
+        timex: 0,
+        timey: 0,
+        timeg: 0,
+        hitleft: false,
+        hitright: false,
+        hittop: false,
+        hitbottom: false,
+        jumpcount: 1,
+        cameraleft: 0,
+        holdingleft: false,
+        holdingright: false,
+        dodialogue: false,
+    };
+
+    createBox(160,100,40,200);
+    createBox(50,120,40,30);
+    createBox(50,200,120,40);
+    createBox(0,0,400,40);
+    createBox(400,200,120,40);
+    createBox(700,200,100,400);
+    createBox(0,300,40,40);
+    createAutoDialogueBox(10,90,200,50,["hello","welcome to customgame2","it's like customgame, but with physics"]);
+
+    createBox(0, c.height, 10000000, 40);
+    createBox(-40, 0, 40, c.height);
+
+    createPlayerPiece(900,200,30,10,"tops");
+
+    function start() {
+        if(gameStarted == false) {
+            gameStarted = true;
+            drawInterval = setInterval(draw, 1);
+            playerMovementInterval = setInterval(playerMovement, 1);
+        }
+    }
+
+    function playerMovement() {
+        // player collision physics
+        if(player.timeg < 1.5) {
+            player.timeg += .01;
+        }
+        if(player.hittop) {
+            player.veloy = 0;
+            player.timey = 0;
+            player.timeg = 0;
+            player.jumpcount = 0;
+        } else if(player.hitleft || player.hitright) {
+            player.velox = 0;
+            player.timex = 0;
+            player.veloy = 0;
+            player.timey = 0;
+        } else if (player.hitbottom) {
+            player.veloy = 0;
+            player.timey = 0;
+        }
+        if(player.accely < 10) {
+            player.accely += player.gravity;
+        }
+        player.t += .1;
+        if(player.timex > 0) {
+            player.timex -= .1;
+        }
+        if(player.timey > 0) {
+            player.timey -= .1;
+        }
+
+        document.onkeyup = function(e) {
+            switch(e.keyCode) {
+                case 37:
+                    // left
+                        player.holdingleft = false;
+                    break;
+                case 39:
+                    // right
+                        player.holdingright = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+        // player input
+        document.onkeydown = function(e) {
+            switch(e.keyCode) {
+                case 13:
+                    // enter
+                    if(player.dodialogue) {
+                        autodialogues[currentDialogueObject[6]][5]++;
+                    }
+                    break;
+                case 16:
+                    // rshift
+                    if(player.dodialogue) {
+                        player.dodialogue = false;
+                        autodialogues[currentDialogueObject[6]][5] = currentDialogueObject[4].length;
+                    }
+                    break;
+                case 37:
+                    // left
+                    if(!player.dodialogue) {
+                        player.holdingleft = true;
+                    }
+                    break;
+                case 38:
+                    // up
+                    if(!player.dodialogue) {
+                        if(player.jumpcount == 0 && !player.hitbottom) {
+                                player.accely = -55;
+                                player.timey = 1;
+                                player.jumpcount++;
+                        }
+                    }
+                    break;
+                case 39:
+                    // right
+                    if(!player.dodialogue) {
+                        player.holdingright = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(player.holdingleft) {
+            player.accelx = -4;
+            player.timex = 1;
+        }
+        if(player.holdingright) {
+            player.accelx = 4;
+            player.timex = 1;
+        }
+
+        // movement y
+        player.veloy = player.accely * player.timey;
+        player.y += player.veloy * player.timey;
+
+        // gravity
+        player.velog = player.gravity * player.timeg;
+        player.y += player.velog * player.timeg;
+
+        // movement x
+        player.velox = player.accelx * player.timex;
+        player.x += player.velox * player.timex;
+
+        if(player.accelx > 0) {
+            player.accelx -= .4;
+        } else if(player.accelx < 0) {
+            player.accelx += .4;
+        }
+
+        // collisions KEK
+        for(var i = 0; i < colliders.length; i++) {
+            var top = 0;
+            var left = 0;
+            var right = 0;
+            var bottom = 0;
+            var object = colliders[i];
+            for(var j = player.y; j < player.y + player.h; j++) {
+                for(var k = player.x; k < player.x + player.w; k++) {
+                    if(k <= object[0] && k >= object[0] - 1 && j >= object[1] && j <= object[1] + object[3]) {
+                        left++;
+                    } else if(k <= object[0] + object[2] + 1 && k >= object[0] + object[2] && j >= object[1] && j <= object[1] + object[3]) {
+                        right++;
+                    } else if(k >= object[0] && k <= object[0] + object[2] && j >= object[1] - 1 && j <= object[1]) {
+                        top++;
+                    } else if(k >= object[0] && k <= object[0] + object[2] && j >= object[1] + object[3] && j <= object[1] + object[3] + 1) {
+                        bottom++;
+                    }
+                }
+            }
+
+            player.hitleft = false;
+            player.hitright = false;
+            player.hittop = false;
+            player.hitbottom = false;
+
+            if(left > right && left > top && left > bottom) {
+                player.x = object[0] - player.w - 2;
+                player.hitleft = true;
+                player.hitright = false;
+                player.hitbottom = false;
+                player.hittop = false;
+                break;
+            } else if(right > left && right > top && right > bottom) {
+                player.x = object[0] + object[2] + 2;
+                player.hitleft = false;
+                player.hitright = true;
+                player.hitbottom = false;
+                player.hittop = false;
+                break;
+            } else if(top > left && top > right && top > bottom) {
+                player.y = object[1] - player.h - 1;
+                player.hitleft = false;
+                player.hitright = false;
+                player.hittop = true;
+                player.hitbottom = false;
+
+                player.jumpcount = 0;
+                break;
+            } else if(bottom > left && bottom > right && bottom > top) {
+                player.y = object[1] + object[3] + 1;
+                player.hitleft = false;
+                player.hitright = false;
+                player.hittop = false;
+                player.hitbottom = true;
+                break;
+            }
+        }
+
+        // playerpiece collisions KEK
+        var collided = false;
+        for(var i = 0; i < playerpieces.length; i++) {
+            var object = playerpieces[i];
+            for(var j = player.x; j < player.x + player.w; j++) {
+                for(var k = player.y; k < player.y + player.h; k++) {
+                    if(j >= object[0] && j < object[0] + object[2] && k >= object[1] && k < object[1] + object[3] && !collided) {
+                        playerpieces[i] = [-40,-40,0,0,"tops"];
+                        switch(object[4]) {
+                            case "tops":
+                                player.h += object[3];
+                                break;
+                            case "sides":
+                                player.w += object[2];
+                                break;
+                            default:
+                                break;
+                        }
+                        collided = true;
+                    }
+                }
+            }
+        }
+
+        // fix falling through floor
+        if((player.holdingleft || player.holdingright) && (player.hitleft || player.hitright)) {
+            player.timeg = 0;
+        }
+
+        // autodialogue collisions LOL
+        for(var i = 0; i < autodialogues.length; i++) {
+            currentDialogueObject = autodialogues[i];
+            for(var j = player.x; j < player.x + player.w; j++) {
+                for(var k = player.y; k < player.y + player.h; k++) {
+                    if(currentDialogueObject[5] < currentDialogueObject[4].length && j >= currentDialogueObject[0] && j < currentDialogueObject[0] + currentDialogueObject[2] && k >= currentDialogueObject[1] && k < currentDialogueObject[1] + currentDialogueObject[3]) {
+                        player.dodialogue = true;
+                        break;
+                    } else {
+                        player.dodialogue = false;
+                    }
+                }
+            }
+        }
+    }
+
+    function draw() {
+        if(!player.dodialogue) {
+        // camera movement KEK
+        if(player.x - player.cameraleft >= 800) {
+            if(player.velox < 0) {
+                player.cameraleft -= player.velox;
+            } else if(player.velox > 0) {
+                player.cameraleft += player.velox;
+            }
+        } else if(player.x - player.cameraleft <= 200) {
+            if(player.velox < 0) {
+                player.cameraleft += player.velox;
+            } else if(player.velox > 0) {
+                player.cameraleft -= player.velox;
+            }
+        }
+        // clear canvas LOL
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        // draw player
+        ctx.fillStyle = "red";
+        ctx.fillRect(player.x - player.cameraleft, player.y, player.w, player.h);
+
+        // draw boxes LOL
+        ctx.fillStyle = "gray";
+        for(var i = 0; i < colliders.length; i++) {
+            var object = colliders[i];
+            ctx.fillRect(object[0] - player.cameraleft, object[1], object[2], object[3]);
+        }
+
+        // draw playerpieces LOL
+        ctx.fillStyle = "red";
+        for(var i = 0; i < playerpieces.length; i++) {
+            var object = playerpieces[i];
+            ctx.fillRect(object[0] - player.cameraleft, object[1], object[2], object[3]);
+        }
+
+        ctx.font = "30px Arial";
+        ctx.fillText("customgame2", 10, 360);
+        }
+        // draw dialogues
+        else {
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = "white";
+            ctx.fillStyle = "white";
+            textArray = currentDialogueObject[4];
+            ctx.clearRect(50,250,900,125);
+            ctx.strokeRect(50,250,900,125);
+            ctx.fillText("* " + textArray[currentDialogueObject[5]], 60,285);
+        }
+    }
+    
+    function createBox(x, y, w, h) {
+        var list = [x, y, w, h];
+        colliders.push(list);
+    }
+
+    function createPlayerPiece(x, y, w, h, location) {
+        var list = [x, y, w, h, location];
+        playerpieces.push(list);
+    }
+
+    function createAutoDialogueBox(x, y, w, h, text, afterText) {
+        var list = [x, y, w, h, text, 0, dialogueCount];
+        autodialogues.push(list);
+        dialogueCount++;
+    }
+</script>

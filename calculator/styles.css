@@ -1,3 +1,8 @@
+.navs {
+  float: none;
+  max-width: 20%;
+}
+
 #homepage {
   float: right;
   max-width: 20%;
@@ -20,6 +25,11 @@
 }
 
 #customgamepage {
+  float: none;
+  max-width: 20%;
+}
+
+#customgame2page {
   float: none;
   max-width: 20%;
 }

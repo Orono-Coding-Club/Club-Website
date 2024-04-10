@@ -16,16 +16,22 @@
         <a href="./main.html" alt="Calculator">Calculator page</a>
     </nav>
 </body>
-</html>
 <script>
     c = document.getElementById('canvas');
     ctx = c.getContext('2d');
+    
+    var mus_bg1 = new Audio('../Assets/customgame/computer song 1.mp3');
+    mus_bg1.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
     
     var colliders = [];
     var antiColliders = [];
     var dialogueColliders = [];
     var antiDialogueColliders = [];
     var roomColliders = [];
+    var movableColliders = [];
     var roomNumber = 0;
     var doDialogue = false;
     var dialogueText = [];
@@ -34,13 +40,17 @@
     var hitAntiBox = false;
     var hitAntiDialogueBox = false;
     var dialogueTextStep = 0;
+    var movementHistory = "";
+    var moveMovableByX = 0;
+    var moveMovableByY = 0;
+    var movableCollided = false;
 
     var dialogueBoxX = c.width * .1;
     var dialogueBoxY = c.height * .5;
     var dialogueBoxW = c.width * .8;
     var dialogueBoxH = c.height * .4;
-
     
+    var roomHistory = 0;
 
     var pwidth = 40;
     var pheight = 40;
@@ -53,7 +63,7 @@
 
     createBox(40,40,120,120,0);
     createAntiBox(40,80,80,40,0);
-    createDialogueBox(40,40,160,160,0,["It's a square.","You try to push it.","Nothing happens."]);
+    createDialogueBox(40,40,160,160,0,["It's a square.","You try to push it.","Nothing happens."],[["..."],["Why are you still doing this?"],["...","Maybe you can push something else."]]);
 
     createBox(400,120,200,200,0);
     createAntiBox(400,120,160,160,0);
@@ -66,6 +76,10 @@
     createRoomBox(0,-40,800,40,2,0,"up");
     createRoomBox(0,-40,800,40,0,3,"up");
     createRoomBox(0,400,800,40,3,0,"down");
+    createRoomBox(-40,0,40,400,0,4,"left");
+    createRoomBox(800,0,40,400,4,0,"right");
+
+    createMovableBox(200,200,40,40,0);
 
     var movement;
     var drawing;
@@ -74,6 +88,7 @@
         movement = setInterval(playerMovement,1);
         drawing = setInterval(draw,1);
         drawingGUI = setInterval(drawGUI,100);
+        mus_bg1.play();
     }
     
     var player = {
@@ -101,6 +116,9 @@
             // Check for player input for dialogue
             switch(e.keyCode) {
                 case 13:
+                    dialogueDrawStep = 0;
+                    dialogueTextTemp = "";
+                    hitAntiDialogueBox = false;
                     ctx.clearRect(dialogueBoxX,dialogueBoxY,dialogueBoxW,dialogueBoxH);
                     if(doDialogue == true && dialogueStep + 1 != dialogueText.length) {
                         dialogueStep++;
@@ -113,8 +131,8 @@
                     } else if(doDialogue == false) {
                         dialogueTextStep = 0;
                         dialogueStep = 0;
+                        dialogue();
                     }
-                    dialogue();
                     break;
                 case 16:
                     dialogueDrawStep = 0;
@@ -132,25 +150,36 @@
                     player.x -= player.speed;
                     player.xMoveHistory = -player.speed;
                     player.yMoveHistory = 0;
+                    movementHistory = "left";
                     break; 
                 case 38: 
                     player.y -= player.speed;
                     player.yMoveHistory = -player.speed;
                     player.xMoveHistory = 0;
+                    movementHistory = "up";
                     break; 
                 case 39: 
                     player.x += player.speed;
                     player.xMoveHistory = player.speed;
                     player.yMoveHistory = 0;
+                    movementHistory = "right";
                     break; 
                 case 40: 
                     player.y += player.speed;
                     player.yMoveHistory = player.speed;
                     player.xMoveHistory = 0;
+                    movementHistory = "down";
                     break;
+                case 82:
+                    for(var i = 0; i<movableColliders.length; i+=8) {
+                        movableColliders[i] = movableColliders[i+5];
+                        movableColliders[i+1] = movableColliders[i+6];
+                        movableColliders[i+4] = movableColliders[i+7];
+                    }
                 default:
                     break;
             }
+            roomHistory = roomNumber;
         }
         };
 
@@ -165,44 +194,82 @@
         }
 
         // Check for player collision against room boxes
-        for(var i = 0; i<roomColliders.length; i+=7) {
-            if(player.x>=roomColliders[i] && player.x<roomColliders[i]+roomColliders[i+2] && player.y>=roomColliders[i+1] && player.y<roomColliders[i+1]+roomColliders[i+3] && (roomColliders[i+4] == roomNumber || roomColliders[i+4] == -1)) {
-                roomNumber = roomColliders[i+5];
-                switch(roomColliders[i+6]) {
+        checkRoomCollision(player.x,player.y,"player");
+
+        // Check for movable boxes collision against room boxes
+        checkRoomCollision(movableColliders,movableColliders,"movablebox");
+
+        // Check for player collision against movable boxes
+        for(var i = 0; i<movableColliders.length; i+=8) {
+            if(player.x>=movableColliders[i] && player.x<movableColliders[i]+movableColliders[i+2] && player.y>=movableColliders[i+1] && player.y<movableColliders[i+1]+movableColliders[i+3] && (movableColliders[i+4] == roomNumber || movableColliders[i+4] == -1)) {
+                switch(movementHistory) {
                     case "right":
-                        player.x = 0;
+                        moveMovableByX = 40;
                         break;
                     case "left":
-                        player.x = 760;
+                        moveMovableByX = -40;
                         break;
                     case "up":
-                        player.y = 360;
+                        moveMovableByY = -40;
                         break;
                     case "down":
-                        player.y = 0;
+                        moveMovableByY = 40;
                         break;
                     default:
                         break;
                 }
-                
+                movableCollided = false;
+                var movableCollidedCount = 0;
+                var collidedCount = 0;
+                for (var j = 0; j<colliders.length; j+=5) {
+                    if(movableColliders[i]+moveMovableByX>=colliders[j] && movableColliders[i]+moveMovableByX<colliders[j]+colliders[j+2] && movableColliders[i+1]+moveMovableByY>=colliders[j+1] && movableColliders[i+1]+moveMovableByY<colliders[j+1]+colliders[j+3] && (colliders[j+4] == roomNumber || colliders[j+4] == -1)) {
+                        collidedCount++;
+                        for(var k = 0; k<antiColliders.length; k+=5) {
+                            if(movableColliders[i]+moveMovableByX>=antiColliders[k] && movableColliders[i]+moveMovableByX<antiColliders[k]+antiColliders[k+2] && movableColliders[i+1]+moveMovableByY>=antiColliders[k+1] && movableColliders[i+1]+moveMovableByY<antiColliders[k+1]+antiColliders[k+3] && antiColliders[k+4] == roomNumber) {
+                                movableCollided = false;
+                                movableCollidedCount++;
+                            }
+                        }
+                    }
+                }
+                if(movableCollided == false && (movableCollidedCount != 0 || collidedCount == 0)) {
+                    movableColliders[i] += moveMovableByX;
+                    movableColliders[i+1] += moveMovableByY;
+                } else {
+                    player.x = player.px;
+                    player.y = player.py;
+                    roomNumber = roomHistory;
+                    movableCollided = true;
+                }
             }
         }
+        moveMovableByX = 0;
+        moveMovableByY = 0;
+        movementHistory = "";
     }
 
     function dialogue() {
-        dialogueDrawStep = 0;
-        dialogueTextTemp = "";
-        hitAntiDialogueBox = false;
         for(var i = 0; i<antiDialogueColliders.length; i+=5) {
             if(player.x>=antiDialogueColliders[i] && player.x<antiDialogueColliders[i]+antiDialogueColliders[i+2] && player.y>=antiDialogueColliders[i+1] && player.y<antiDialogueColliders[i+1]+antiDialogueColliders[i+3] && antiDialogueColliders[i+4] == roomNumber) {
                 hitAntiDialogueBox = true;
             }
         }
         if(hitAntiDialogueBox == false) {
-            for(var i = 0; i<dialogueColliders.length; i+=6) {
-                if(player.x>=dialogueColliders[i] && player.x<dialogueColliders[i]+dialogueColliders[i+2] && player.y>=dialogueColliders[i+1] && player.y<dialogueColliders[i+1]+dialogueColliders[i+3] && dialogueColliders[i+4] == roomNumber) {
+            for(var i = 0; i<dialogueColliders.length; i++) {
+                var arrayObject = dialogueColliders[i];
+                var tester = arrayObject[6];
+                var tester2 = tester[0];
+                if(player.x>=arrayObject[0] && player.x<arrayObject[0]+arrayObject[2] && player.y>=arrayObject[1] && player.y<arrayObject[1]+arrayObject[3] && arrayObject[4] == roomNumber) {
                     doDialogue = true;
-                    dialogueText = dialogueColliders[i+5];
+                    if(arrayObject[7] == 0) {
+                        dialogueText = arrayObject[5];
+                    } else {
+                        var afterText = arrayObject[6];
+                        dialogueText = afterText[arrayObject[7]-1];
+                    }
+                    if(arrayObject[7]<arrayObject[6].length && tester2[0] != "p") {
+                        arrayObject[7]++;
+                    }
                 }
             }
         }
@@ -267,12 +334,20 @@
         ctx.fillStyle = "red";
         ctx.fillRect(player.x,player.y,pwidth,pheight);
 
+        // Draw movable boxes
+        ctx.fillStyle = "orange";
+        for(var i = 0; i<movableColliders.length; i+=8) {
+            if(movableColliders[i+4] == roomNumber) {
+                ctx.fillRect(movableColliders[i],movableColliders[i+1],movableColliders[i+2],movableColliders[i+3])
+            }
+        }
         // Draw dialogue box collisions and room box collisions (for debugging)
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
-        for(var i = 0; i<dialogueColliders.length; i+=6) {
-            if(dialogueColliders[i+4] == roomNumber) {
-                ctx.strokeRect(dialogueColliders[i],dialogueColliders[i+1],dialogueColliders[i+2],dialogueColliders[i+3]);
+        for(var i = 0; i<dialogueColliders.length; i++) {
+            var arrayObject = dialogueColliders[i];
+            if(arrayObject[4] == roomNumber) {
+                ctx.strokeRect(arrayObject[0],arrayObject[1],arrayObject[2],arrayObject[3]);
             }
         }
         ctx.strokeStyle = "cyan";
@@ -311,6 +386,11 @@
     function drawDialogueText() {
         // Draw dialogue text
         if(doDialogue == true) {
+            if(dialogueText[dialogueStep] == "") {
+                dialogueStep = 0;
+                dialogueTextStep = 0;
+                doDialogue = false;
+            }
             setTimeout(function() {
                 dialogueTextTemp += dialogueText[dialogueStep].charAt(dialogueTextStep);
                 ctx.fillText("* " + dialogueTextTemp,dialogueBoxX + 20,dialogueBoxY + 40);
@@ -370,12 +450,23 @@
         antiColliders.push(rm);
     }
 
-    function createDialogueBox(x,y,w,h,rm,text) {
-        while( x % pwidth != 0 ) {
+    function createDialogueBox(x,y,w,h,rm,text,afterText) {
+        var arrayObject = [];
+        var interactCount = 0;
+
+        if(arguments[6] === undefined) {
+            afterText = [["p"]];
+        }
+
+        for(var i = 0; i<afterText.length; i++) {
+            afterText[i].push("");
+        }
+        
+        while(x % pwidth != 0 ) {
             x++;
         }
 
-       while( y % pheight != 0 ) {
+        while(y % pheight != 0 ) {
             y++;
         }
         
@@ -387,12 +478,15 @@
             h++;
         }
 
-        dialogueColliders.push(x);
-        dialogueColliders.push(y);
-        dialogueColliders.push(w);
-        dialogueColliders.push(h);
-        dialogueColliders.push(rm);
-        dialogueColliders.push(text);
+        arrayObject.push(x);
+        arrayObject.push(y);
+        arrayObject.push(w);
+        arrayObject.push(h);
+        arrayObject.push(rm);
+        arrayObject.push(text);
+        arrayObject.push(afterText);
+        arrayObject.push(interactCount);
+        dialogueColliders.push(arrayObject);
     }
 
     function createAntiDialogueBox(x,y,w,h,rm) {
@@ -445,7 +539,102 @@
         roomColliders.push(pos);
     }
 
-    function checkCollision() {
+    function createMovableBox(x,y,w,h,rm) {
+        while( x % pwidth != 0 ) {
+            x++;
+        }
+
+       while( y % pheight != 0 ) {
+            y++;
+        }
         
+        while(w % pwidth != 0) {
+            w++;
+        }
+
+        while(h % pheight != 0) {
+            h++;
+        }
+
+        movableColliders.push(x);
+        movableColliders.push(y);
+        movableColliders.push(w);
+        movableColliders.push(h);
+        movableColliders.push(rm);
+        movableColliders.push(x);
+        movableColliders.push(y);
+        movableColliders.push(rm);
+    }
+
+    function checkRoomCollision(objectx,objecty,object) {
+        var step = 0;
+        var index = 0;
+        switch(object) {
+            case "player":
+                break;
+            case "movablebox":
+                step = 8;
+                break;
+        }
+        for(var i = 0; i<roomColliders.length; i+=7) {
+            if(object == "player") {
+                if(objectx>=roomColliders[i] && objectx<roomColliders[i]+roomColliders[i+2] && objecty>=roomColliders[i+1] && objecty<roomColliders[i+1]+roomColliders[i+3] && (roomColliders[i+4] == roomNumber || roomColliders[i+4] == -1)) {
+                    roomNumber = roomColliders[i+5];
+                    switch(roomColliders[i+6]) {
+                        case "right":
+                            objectx = 0;
+                            break;
+                        case "left":
+                            objectx = 760;
+                            break;
+                        case "up":
+                            objecty = 360;
+                            break;
+                        case "down":
+                            objecty = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                }
+            } else if(object == "movablebox") {
+                for(var j = 0; j<objectx.length; j+=step) {
+                    if(objectx[j]>=roomColliders[i] && objectx[j]<roomColliders[i]+roomColliders[i+2] && objecty[j+1]>=roomColliders[i+1] && objecty[j+1]<roomColliders[i+1]+roomColliders[i+3] && (roomColliders[i+4] == roomNumber || roomColliders[i+4] == -1)) {
+                        index = j;
+                        movableColliders[j+4] = roomColliders[i+5];
+                        switch(roomColliders[i+6]) {
+                            case "right":
+                                objectx[j] = 0;
+                                break;
+                            case "left":
+                                objectx[j] = 760;
+                                break;
+                            case "up":
+                                objecty[j+1] = 360;
+                                break;
+                            case "down":
+                                objecty[j+1] = 0;
+                                break;
+                            default:
+                                break;
+                        }
+                    
+                    }
+                }
+            }
+        }
+        switch(object) {
+            case "player":
+                player.x = objectx;
+                player.y = objecty;
+                break;
+            case "movablebox":
+                movableColliders[j] = objectx[j];
+                movableColliders[j+1] = objecty[j+1];
+            default:
+                break;
+        }
     }
 </script>
+</html>
