@@ -19,3 +19,7 @@
   float: none;
   max-width: 20%;
 }
+
+p {
+  font-family: Arial;
+}
