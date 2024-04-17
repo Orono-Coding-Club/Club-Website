@@ -1,0 +1,186 @@
+<html>
+    <p>arrowrhythm began development on 2024.04.11</p>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+    <br>
+    <button onclick="start()">start arrowrhythm</button>
+    <br>
+    <input type="text" id="importmap" placeholder="paste JSON import here">
+    <button onclick="importMap()">import map</button>
+</html>
+<style>
+    #canvas {
+        background-color: black;
+    }
+
+    p {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+</style>
+<script>
+    var song = new Audio('arrowrhythm.mp3');
+    var c = document.getElementById("canvas");
+    var importmap = document.getElementById("importmap");
+    var ctx = c.getContext("2d");
+    var arrows = [];
+    var activeArrows = [];
+    var started = false;
+    var al = 40;
+    var als = 35;
+    var hl = 20;
+    var time = 0;
+    var score = 0;
+
+    function start() {
+        if(!started) {
+            setInterval(update, 1);
+            setInterval(control, 1);
+            song.play();
+            started = true;
+        }
+    }
+
+    function importMap() {
+        var dataJSON = JSON.parse(importmap.value);
+        arrows = dataJSON.a;
+    }
+
+    function control() {
+        // key down
+        document.onkeydown = function(e) {
+            switch(e.keyCode) {
+                case 70:
+                    checkAccuracy("left");
+                    break;
+                case 74:
+                    checkAccuracy("right");
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    function checkAccuracy(location) {
+        var min = 1000;
+        var index;
+        for(var i = 0; i < activeArrows.length; i++) {
+            var a = activeArrows[i];
+            if(a[4] < min && a[5] == location) {
+                min = a[4];
+                index = i;
+            }
+        }
+        var a = activeArrows[index];
+        var div = Math.floor(100000 / 90*((a[4]-time)/(a[4]-a[3])));
+        if(time <= a[4]) {
+            score += div;
+        } else {
+            score += 2;
+        }
+        activeArrows.splice(index, 1);
+    }
+
+    function update() {
+        // update
+        time = song.currentTime;
+        for(var i = 0; i < arrows.length; i++) {
+            var a = arrows[i];
+            if(time > a[3]) {
+                activeArrows.push(a);
+                arrows.splice(i, 1);
+            }
+        }
+
+        for(var i = 0; i < activeArrows.length; i++) {
+            var a = activeArrows[i];
+            if(time > a[4] + .25) {
+                activeArrows.splice(i, 1);
+            }
+        }
+
+        // draw
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(500,0);
+        ctx.lineTo(500,c.height);
+        ctx.stroke();
+        ctx.font = "Bold 15px Arial";
+        ctx.fillText("score: " + score, 5,15);
+        ctx.fillStyle = "white";
+        ctx.lineWidth = 20;
+
+        for(var i = 0; i < activeArrows.length; i++) {
+            var a = activeArrows[i];
+
+            if(time < a[4] + .25) {
+                var deg = a[2];
+                var hrad = (deg - 90) * Math.PI/180;
+                var hrad2 = (deg - 270) * Math.PI/180;
+                var rad = deg * Math.PI/180;
+
+                var div = 90*((a[4]-time)/(a[4]-a[3]));
+                var deg2 = deg - div;
+                
+                ctx.fillText(deg2,5,200);
+
+                var x2 = a[0] + Math.cos(rad) * al;
+                var y2 = a[1] + Math.sin(rad) * al;
+                var x3 = a[0] + Math.cos(rad) * als;
+                var y3 = a[1] + Math.sin(rad) * als;
+                var x4 = x3 + Math.cos(rad) * hl;
+                var y4 = y3 + Math.sin(rad) * hl;
+                var x5 = x3 + Math.cos(hrad) * hl;
+                var y5 = y3 + Math.sin(hrad) * hl;
+                var x6 = x3 + Math.cos(hrad2) * hl;
+                var y6 = y3 + Math.sin(hrad2) * hl;
+
+                ctx.fillStyle = "gray";
+                ctx.strokeStyle = "gray";
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(x3,y3);
+                ctx.lineTo(x5,y5);
+                ctx.lineTo(x4,y4);
+                ctx.lineTo(x6,y6);
+                ctx.lineTo(x3,y3);
+                ctx.fill();
+
+                rad = deg2 * Math.PI/180;
+                hrad2 = (deg2 - 270) * Math.PI/180;
+                hrad = (deg2 - 90) * Math.PI/180;
+
+                x2 = a[0] + Math.cos(rad) * al;
+                y2 = a[1] + Math.sin(rad) * al;
+                x3 = a[0] + Math.cos(rad) * als;
+                y3 = a[1] + Math.sin(rad) * als;
+                x4 = x3 + Math.cos(rad) * hl;
+                y4 = y3 + Math.sin(rad) * hl;
+                x5 = x3 + Math.cos(hrad) * hl;
+                y5 = y3 + Math.sin(hrad) * hl;
+                x6 = x3 + Math.cos(hrad2) * hl;
+                y6 = y3 + Math.sin(hrad2) * hl;
+
+                ctx.fillStyle = "white";
+                ctx.strokeStyle = "white";
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(x3,y3);
+                ctx.lineTo(x5,y5);
+                ctx.lineTo(x4,y4);
+                ctx.lineTo(x6,y6);
+                ctx.lineTo(x3,y3);
+                ctx.fill();
+            }
+       }
+    }
+</script>

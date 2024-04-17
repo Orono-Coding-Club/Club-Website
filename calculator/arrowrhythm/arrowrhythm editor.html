@@ -1,0 +1,263 @@
+<html>
+    <p>the currently selected arrow is highlighted red</p>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+    <br>
+    <button onclick="start()">launch arrowrhythm editor</button>
+    <br>
+    <button onclick="createArrowButton()">create arrow</button>
+    <button onclick="deleteArrowButton()">delete arrow</button>
+    <br>
+    <input type="text" id="tinput" placeholder="t input for arrow">
+    <button onclick="changet()">submit</button>
+    <br>
+    <input type="text" id="tendinput" placeholder="t end input for arrow">
+    <button onclick="changetend()">submit</button>
+    <br>
+    <input type="text" id="tglobalinput" placeholder="t global input">
+    <button onclick="changetglobal()">submit</button>
+    <br>
+    <input type="text" id="importmap" placeholder="paste JSON import here">
+    <button onclick="importMap()">import map</button>
+    <br>
+    <button onclick="saveData()">export map</button>
+</html>
+<style>
+    #canvas {
+        background-color: black;
+    }
+
+    p {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+</style>
+<script>
+    var song = new Audio('arrowrhythm.mp3');
+    var tinput = document.getElementById("tinput");
+    var tendinput = document.getElementById("tendinput");
+    var tglobalinput = document.getElementById("tglobalinput");
+    var importmap = document.getElementById("importmap");
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    var arrows = [];
+    var started = false;
+    var al = 40;
+    var als = 35;
+    var hl = 20;
+    var time = 0;
+    var holdingmouse = false;
+    var holdingshift = false;
+    var ca = 0;
+    var mouse;
+
+    createArrow(300,200,45,0,10);
+
+    c.addEventListener("mousedown", function() {
+        holdingmouse = true;
+    })
+    
+    c.addEventListener("mouseup", function() {
+        holdingmouse = false;
+    })
+
+    c.addEventListener("mousemove", function(event) {
+        mouse = getMousePos(event);
+    })
+
+    function importMap() {
+        var dataJSON = JSON.parse(importmap.value);
+        arrows = dataJSON.a;
+    }
+
+    function start() {
+        if(!started) {
+            setInterval(update, 1);
+            setInterval(control, 1);
+            //song.play();
+            started = true;
+        }
+    }
+
+    function changetglobal() {
+        time = Number(tglobalinput.value);
+    }
+
+    function changet() {
+        var a = arrows[ca];
+        a[3] = Number(tinput.value);
+    }
+
+    function changetend() {
+        var a = arrows[ca];
+        a[4] = Number(tendinput.value);
+    }
+
+    function saveData() {
+        var dataJSON = {
+            a: arrows
+        }
+        alert(JSON.stringify(dataJSON));
+    }
+
+    function control() {
+        // key up
+        document.onkeyup = function(e) {
+            switch(e.keyCode) {
+                case 16:
+                    holdingshift = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+        // key down
+        document.onkeydown = function(e) {
+            switch(e.keyCode) {
+                case 16:
+                    holdingshift = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    function round90(deg) {
+        return Math.ceil(deg/90) * 90;
+    }
+
+    function getMousePos(event) {
+        const rect = c.getBoundingClientRect();
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+    }
+
+    function update() {
+        //time = song.currentTime;
+
+        // update stuff
+        arrows.sort(function(a, b) {
+            return a - b;
+        });
+
+        if(holdingmouse) {
+            for(var i = 0; i < arrows.length; i++) {
+                var a = arrows[i];
+
+                var rad = a[2] * Math.PI/180;
+                var x3 = a[0] + Math.cos(rad) * als;
+                var y3 = a[1] + Math.sin(rad) * als;
+                var x4 = x3 + Math.cos(rad) * hl;
+                var y4 = y3 + Math.sin(rad) * hl;
+
+                if(mouse.x >= a[0] - 20 && mouse.x <= a[0] + 20 && mouse.y >= a[1] - 20 && mouse.y <= a[1] + 20) {
+                    a[0] = mouse.x;
+                    a[1] = mouse.y;
+                    if(a[0] >= 500) {
+                        a[5] = "right";
+                    } else {
+                        a[5] = "left";
+                    }
+                    ca = i;
+                } else if(mouse.x >= x4 - 20 && mouse.x <= x4 + 20 && mouse.y >= y4 - 20 && mouse.y <= y4 + 20) {
+                    ca = i;
+                    if(!holdingshift) {
+                        a[2] = Math.atan2(mouse.y - a[1], mouse.x - a[0]) / (Math.PI/180);
+                    } else {
+                        a[2] = round90(Math.atan2(mouse.y - a[1], mouse.x - a[0]) / (Math.PI/180));
+                    }
+                }
+            }
+        }
+
+        // draw
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx.fillStyle = "white";
+        ctx.fillText("current arrow properties", 10, 13);
+        ctx.fillText(arrows[ca][0] + " " + arrows[ca][1] + ", " + arrows[ca][2],10,30);
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(500,0);
+        ctx.lineTo(500,c.height);
+        ctx.stroke();
+        ctx.font = "Bold 12px Arial";
+        ctx.lineWidth = 20;
+
+        for(var i = 0; i < arrows.length; i++) {
+            var a = arrows[i];
+
+            if(time < a[4]) {
+                var hrad = (a[2] - 90) * Math.PI/180;
+                var hrad2 = (a[2] - 270) * Math.PI/180;
+
+                var rad = a[2] * Math.PI/180;
+                var x2 = a[0] + Math.cos(rad) * al;
+                var y2 = a[1] + Math.sin(rad) * al;
+                var x3 = a[0] + Math.cos(rad) * als;
+                var y3 = a[1] + Math.sin(rad) * als;
+                var x4 = x3 + Math.cos(rad) * hl;
+                var y4 = y3 + Math.sin(rad) * hl;
+                var x5 = x3 + Math.cos(hrad) * hl;
+                var y5 = y3 + Math.sin(hrad) * hl;
+                var x6 = x3 + Math.cos(hrad2) * hl;
+                var y6 = y3 + Math.sin(hrad2) * hl;
+
+                if(i == ca) {
+                    ctx.fillStyle = "red";
+                    ctx.strokeStyle = "red";
+                } else {
+                    ctx.fillStyle = "white";
+                    ctx.strokeStyle = "white";
+                }
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(x3,y3);
+                ctx.lineTo(x5,y5);
+                ctx.lineTo(x4,y4);
+                ctx.lineTo(x6,y6);
+                ctx.lineTo(x3,y3);
+                ctx.fill();
+
+                ctx.fillStyle = "cyan";
+                ctx.fillRect(a[0] - 5,a[1] - 5,10,10);
+                ctx.fillRect(x4 - 5,y4 - 5,10,10);
+                ctx.fillStyle = "white"
+                ctx.fillText(a[3] + ", " + a[4], a[0], a[1] + 20);
+            }
+       }
+    }
+
+    function createArrow(x, y, deg, t, tend) {
+        if(tend === null) {
+            tend = t + 1;
+        }
+
+        var location = "left";
+
+        if(x >= 500) {
+            location = "right";
+        }
+
+        deg *= -1;
+
+        var list = [x, y, deg, t, tend, location];
+        arrows.push(list);
+    }
+
+    function createArrowButton() {
+        var a = arrows[arrows.length-1].slice();
+        a[0] += 50;
+        arrows.push(a);
+    }
+    
+    function deleteArrowButton() {
+        arrows.splice(ca, 1);
+        ca = 0;
+    }
+</script> 

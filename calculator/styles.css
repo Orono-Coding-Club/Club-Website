@@ -1,15 +1,11 @@
 .navs {
   float: none;
   max-width: 20%;
+  margin: 5px;
 }
 
 #homepage {
   float: right;
-  max-width: 20%;
-}
-
-#snakepage {
-  float: none;
   max-width: 20%;
 }
 
@@ -24,12 +20,6 @@
   max-width: 20%;
 }
 
-#customgamepage {
-  float: none;
-  max-width: 20%;
-}
-
-#customgame2page {
-  float: none;
-  max-width: 20%;
+p {
+  font-family: Arial;
 }
