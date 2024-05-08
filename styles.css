@@ -160,6 +160,11 @@ body {
   padding-left: 5%;
 }
 
+#infoarea {
+  position: absolute;
+  bottom: 10px;
+}
+
 .show {
   display: block;
 }
