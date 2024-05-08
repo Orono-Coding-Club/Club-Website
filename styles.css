@@ -161,6 +161,7 @@ body {
 }
 
 #infoarea {
+  border: 3px black solid;
   position: absolute;
   bottom: 10px;
 }
