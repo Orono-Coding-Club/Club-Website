@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>make cool charts!</title>
+<link rel="icon" href="favicon.jpg">
+</head>
+<body>
+<div class="floatparent">
+    <div class="floatchild" style="float:left">
+        <canvas width="1000px" height="600px" id="canvas"></canvas>
+    </div>
+    <div class="floatchild" style="float:right">
+        <div class="floatparent">
+            <p class="floatchild">adjust angle of text</p>
+            <input type="range" min="0" max="90" value="90" class="slider floatchild" id="angle">
+            <p id="angledisplay" class="floatchild slidertext"></p>
+        </div><br>
+        <div class="floatparent">
+            <p class="floatchild">adjust size of text</p>
+            <input type="range" min="0" max="30" value="20" class="slider floatchild" id="fontsize">
+            <p id="fontsizedisplay" class="floatchild slidertext"></p>
+        </div><br>
+        <div>
+            <textarea id="data" rows="30" cols="100"></textarea><br>
+            <button onclick="updateChart()">generate chart</button>
+        </div>
+    </div><br>
+</div><br>
+</body>
+</html>
+<style>
+body {
+    text-align: center;
+}
+.floatchild {
+    width:40%;
+    float:left;
+}
+canvas {
+    background-color: black;
+}
+.slidertext {
+    width:10%;
+}
+</style>
+<script>
+var c = document.getElementById("canvas");
+var ctx = c.getContext("2d");
+var data = document.getElementById("data");
+var angle = document.getElementById("angle");
+var angledisplay = document.getElementById("angledisplay");
+var fontsize = document.getElementById("fontsize");
+var fontsizedisplay = document.getElementById("fontsizedisplay");
+
+var textLengths = [];
+var groupColors = ['red','orange','yellow','green','cyan','blue','indigo','violet','purple'];
+var groups = [];
+var textLocations = [];
+var margin = 20;
+
+ctx.font = "20px Arial";
+ctx.fillStyle = "white";
+ctx.lineWidth = 5;
+
+setInterval(update,50);
+setInterval(updateChart,50);
+
+function updateChart() {
+    var text = data.value;
+    ctx.clearRect(0,0,c.width,c.height);
+    text = text.replace("\n","");
+    var datas = text.split(",");
+    var spacing = (c.width - margin*2) / (datas.length + 1);
+    for(var i = 0; i < datas.length; i++) {
+        ctx.save();
+        ctx.translate(margin + ((i+1)*spacing),c.height - margin);
+        ctx.rotate(-angle.value * Math.PI/180);
+
+        if(datas[i].includes("%")) {
+        var drawText = datas[i].split("%")[2];
+        var group = datas[i].split("%")[1];
+        } else {
+            drawText = datas[i];
+            group = null;
+        }
+        textLocations[i] = margin + ((i+1)*spacing);
+
+        groups[i] = group;
+        ctx.fillText(drawText, 0, 0);
+        ctx.restore();
+        textLengths[i] = ctx.measureText(datas[i]).width;
+    }
+    for(var i = 0; i < groups.length; i++) {
+        var groupHeight = i*10+20;
+        var items = [];
+        ctx.strokeStyle = groupColors[i];
+        for(var j = 0; j < groups.length; j++) {
+            if(groups[j]==i+1) {
+                items.push(j);
+            }
+        }
+        for(var j = 0; j < items.length; j++) {
+            var current = items[j];
+            var previous = items[j-1];
+            var height = c.height - textLengths[current];
+            if(j == 0) {
+                var previous = items[0];
+            }
+            var path = new Path2D();
+            path.moveTo(textLocations[previous]-ctx.lineWidth/2,groupHeight);
+            path.lineTo(textLocations[current],groupHeight);
+            path.lineTo(textLocations[current],height);
+            ctx.stroke(path);
+        }
+    }
+}
+
+function update() {
+    angledisplay.innerText = angle.value;
+    ctx.font = fontsize.value + "px Arial";
+    fontsizedisplay.innerText = fontsize.value;
+}
+</script>
