@@ -4,6 +4,10 @@
   margin: 5px;
 }
 
+body {
+  background-image: URL("../Assets/argyle other.png");
+}
+
 #homepage {
   float: right;
   max-width: 20%;
