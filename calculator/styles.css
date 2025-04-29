@@ -5,7 +5,7 @@
 }
 
 body {
-  background-image: URL("../Assets/argyle other.PNG") repeat;
+  background-image: url("../Assets/argyle.png") repeat;
 }
 
 #homepage {
