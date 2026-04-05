@@ -58,7 +58,10 @@ floorImage.src = "../Assets/eitheror/floor.png";
 
 const objects = [[0, 300, 0]];
 
-const dialogueObjects = [[]];
+let dialogueBuffer = [];
+let dialogueObjects = [[bedDialogue, 0, 305, 0]];
+
+const bedDialogue = ["Your bed.", "Not too much else going on here."];
 
 const images = [["../Assets/eitheror/floor.png", 0, c.height - 170, c.width, 170, 0], ["../Assets/eitheror/bed.png", 10, 300, 280, 150, 0]];
 
@@ -83,6 +86,21 @@ var player = {
     walkCycleInterval: 6,
     walkCycleCounter: 0,
     facing: "right",
+    inDialogue: false,
+    dialogueCounter: 0,
+}
+
+dialogueBoxWidth = 800
+const dialogueBox = {
+    x: 10,
+    y: 10,
+    w: dialogueBoxWidth,
+    h: 200,
+    left: (c.width - dialogueBoxWidth) / 2,
+    top: c.height / 2,
+    font: "15px Arial",
+    border: 4,
+    borderColor: "white",
 }
 
 for(var i = 0; i < playerImages.length; i++) {
@@ -116,6 +134,29 @@ function collision() {
                 player.x = player.px;
                 player.vx = 0;
                 player.image = 0;
+            }
+        }
+    }
+}
+
+function continueDialogue() {
+    if(player.inDialogue) {
+        player.dialogueCounter++
+        if(player.dialogueCounter >= dialogueBuffer.length) {
+            dialogueBuffer = [];
+            player.dialogueCounter = 0;
+            player.inControl = true;
+            player.inDialogue = false;
+        }
+    } else {
+        for(let i = 0; i < dialogueObjects.length; i++) {
+            object = dialogueObjects[i];
+            if(object[3] == room) {
+                if((player.x >= object[1] && player.x <= object[1] + object[2]) || (player.x + player.w >= object[1] && player.x + player.w <= object[1] + object[2])) {
+                    player.inDialogue == true;
+                    takeControl();
+                    dialogueBuffer = object[0];
+                }
             }
         }
     }
@@ -167,9 +208,11 @@ document.onkeydown = (e) => {
                     player.vx = player.speed;
                     player.facing = "right";
                 break;
+            }
+        } else {
+            switch(e.code) {
                 case "Enter":
-                    mode = modes.FIGHT;
-                    ctx.clearRect(0, 0, c.width, c.height);
+                    continueDialogue();
                 break;
             }
         }
@@ -188,7 +231,6 @@ document.onkeydown = (e) => {
                 playerFight.vy = playerFight.speed;
             break;
             case "Enter":
-                mode = modes.NORMAL;
             break;
         }
     }
@@ -289,6 +331,10 @@ function update() {
 
         playerFight.vx = 0
         playerFight.vy = 0;
+
+        if(player.inDialogue) {
+            drawDialogue();
+        }
     } else {
         playerFight.x += playerFight.vx;
         playerFight.y += playerFight.vy;
@@ -353,5 +399,36 @@ function draw() {
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, c.width, c.height);
     }
+}
+
+function drawDialogue() {
+    ctx.clearRect(dialogueBox.left, dialogueBox.top, dialogueBox.w, dialogueBox.h);
+    ctx.font = "15px Verdana";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 4;
+    ctx.fillStyle = "white";
+    let text = dialogueBuffer[player.dialogueCounter];
+
+    ctx.strokeRect(dialogueBox.left, dialogueBox.top, dialogueBox.w, dialogueBox.h);
+    wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w, 20);
+}
+
+function wrapText(text, x, y, maxWidth, lineHeight) {
+    let words = text.split(' ');
+    let line = '';
+
+    for (let i = 0; i < words.length; i++) {
+        let testLine = line + words[i] + ' ';
+        let metrics = ctx.measureText(testLine);
+        let testWidth = metrics.width;
+        if (testWidth > maxWidth && i > 0) {
+            ctx.fillText(line, x, y);
+            line = words[i] + ' ';
+            y += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line, x, y);
 }
 </script>
