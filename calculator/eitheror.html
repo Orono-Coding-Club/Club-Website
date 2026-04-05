@@ -60,7 +60,7 @@ const objects = [[0, 300, 0]];
 
 const dialogueObjects = [[]];
 
-const images = [["../Assets/eitheror/floor.png", 0, c.height - 170, c.width, 170, 0]["../Assets/eitheror/bed.png", 10, 300, 280, 150, 0]];
+const images = [["../Assets/eitheror/floor.png", 0, c.height - 170, null, null, 0], ["../Assets/eitheror/bed.png", 10, 300, 280, 150, 0]];
 
 var room = 0;
 var fade = false;
@@ -333,6 +333,12 @@ function draw() {
         if(image[5] == room) {
             const imageToDraw = new Image();
             imageToDraw.src = image[0];
+            if(image[3] == null) {
+                image[3] = imageToDraw.width;
+            }
+            if(image[4] == null) {
+                image[4] = imageToDraw.height;
+            }
             ctx.drawImage(imageToDraw, image[1], image[2], image[3], image[4]);
         }
     }
