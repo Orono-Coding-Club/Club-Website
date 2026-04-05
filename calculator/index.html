@@ -1,0 +1,348 @@
+<html>
+<body>
+<canvas width="1200" height="600" id="canvas"></canvas>
+<canvas id="collisionCanvas"></canvas>
+</body>
+</html>
+<style>
+body {
+    text-align: center;
+}
+canvas {
+    background-color: black;
+}
+</style>
+<script>
+const c = document.getElementById("canvas");
+const ctx = c.getContext("2d");
+
+const updateInterval = 10;
+
+// fight mode stuff
+const standardDamage = 5;
+const heightUI = 30;
+const modes = {
+    NORMAL: 0,
+    FIGHT: 1,
+}
+
+var mode = modes.NORMAL;
+
+var playerFight = {
+    x: 40,
+    y: 40,
+    vx: 0,
+    vy: 0,
+    speed: 5,
+    w: 20,
+    h: 20,
+    health: 100,
+    damageCooldown: 10,
+    damageCounter: 0,
+    color: "white",
+}
+
+// secondary canvas for hurt collision
+const collisionC = document.getElementById("collisionCanvas");
+const ctxC = collisionC.getContext("2d");
+collisionC.width = playerFight.w;
+collisionC.height = playerFight.h;
+
+// normal mode stuff
+const playerImageSrc = ["player0.png", "player1.png", "player2.png", "player3.png", "player4.png"];
+const playerImages = [new Image(), new Image(), new Image(), new Image(), new Image()];
+const floorImage = new Image();
+floorImage.crossOrigin = "Anonymous";
+floorImage.src = "floor.png";
+
+const objects = [[-30, 30, 0]];
+
+var room = 0;
+var fade = false;
+var fadeStage = 0;
+const maxFadeStage = 10;
+var fadeOperation;
+
+var player = {
+    x: 20,
+    px: 20,
+    y: 100,
+    w: 100,
+    h: 350,
+    vx: 0,
+    vy: 0,
+    speed: 5,
+    image: 0,
+    images: [],
+    inControl: true,
+    walkCycleInterval: 6,
+    walkCycleCounter: 0,
+    facing: "right",
+}
+
+for(var i = 0; i < playerImages.length; i++) {
+    playerImages[i].crossOrigin = "Anonymous";
+    playerImages[i].src = playerImageSrc[i];
+    player.images.push(playerImages[i]);
+}
+
+function takeControl() {
+    player.inControl = false;
+    player.vx = 0;
+}
+
+function walkCycle() {
+    if(player.vx != 0) {
+        player.walkCycleCounter++;
+        if(player.walkCycleCounter >= player.walkCycleInterval) {
+            player.walkCycleCounter = 0;
+            player.image++;
+            if(player.image >= player.images.length) {
+                player.image = 0;
+            }
+        }
+    }
+}
+
+function collision() {
+    for(var i = 0; i < objects.length; i++) {
+        var object = objects[i];
+        for(var j = player.x; j < player.x + player.w; j++) {
+            if(j > object[0] && j < object[0] + object[1] && room == object[2]) {
+                player.x = player.px;
+                player.vx = 0;
+                player.image = 0;
+            }
+        }
+    }
+}
+
+function roomChange() {
+    if(player.x + player.w >= c.width) {
+        room++;
+        player.x = 10;
+        fade = true;
+    } else if(player.x < 0) {
+        room--;
+        player.x = c.width - player.w - 10;
+        fade = true;
+    }
+}
+
+function doFade() {
+    if(fade == true) {
+        takeControl();
+        if(fadeStage == maxFadeStage) {
+            fadeOperation = "decrease";
+        } else if(fadeStage == 0) {
+            fadeOperation = "increase";
+        }
+
+        if(fadeOperation == "decrease") {
+            fadeStage--;
+            if(fadeStage <= 0) {
+                fade = false;
+            }
+        } else {
+            fadeStage++;
+        }
+    } else {
+        player.inControl = true;
+    }
+}
+
+document.onkeydown = (e) => {
+    if(mode == modes.NORMAL) {
+        if(player.inControl) {
+            switch(e.code) {
+                case "KeyA":
+                    player.vx = -player.speed;
+                    player.facing = "left";
+                break;
+                case "KeyD":
+                    player.vx = player.speed;
+                    player.facing = "right";
+                break;
+                case "Enter":
+                    mode = modes.FIGHT;
+                    ctx.clearRect(0, 0, c.width, c.height);
+                break;
+            }
+        }
+    } else {
+        switch(e.code) {
+            case "KeyA":
+                playerFight.vx = -playerFight.speed;
+            break;
+            case "KeyD":
+                playerFight.vx = playerFight.speed;
+            break;
+            case "KeyW":
+                playerFight.vy = -playerFight.speed;
+            break;
+            case "KeyS":
+                playerFight.vy = playerFight.speed;
+            break;
+            case "Enter":
+                mode = modes.NORMAL;
+            break;
+        }
+    }
+}
+
+document.onkeyup = (e) => {
+    if(mode == modes.NORMAL) {
+        if(player.inControl) {
+            switch(e.code) {
+                case "KeyA":
+                    player.vx = 0;
+                break;
+                case "KeyD":
+                    player.vx = 0;
+                break;
+            }
+
+            player.image = 0;
+        }
+    } else {
+        switch(e.code) {
+            case "KeyA":
+                playerFight.vx = 0;
+            break;
+            case "KeyD":
+                playerFight.vx = 0;
+            break;
+            case "KeyW":
+                playerFight.vy = 0;
+            break;
+            case "KeyS":
+                playerFight.vy = 0;
+            break;
+        }
+    }
+}
+
+setInterval(update, updateInterval);
+
+function wallCollision() {
+    if(playerFight.x < 0) {
+        playerFight.x = 0;
+        playerFight.vx = 0;
+    }
+    if(playerFight.x + playerFight.w > c.width) {
+        playerFight.x = c.width - playerFight.w;
+        playerFight.vx = 0;
+    }
+    if(playerFight.y < heightUI) {
+        playerFight.y = heightUI;
+        playerFight.vy = 0;
+    }
+    if(playerFight.y + playerFight.h > c.height) {
+        playerFight.y = c.height - playerFight.h;
+        playerFight.vy = 0;
+    }
+}
+
+function hurtCollision() {
+    if(playerFight.damageCounter <= 0) {
+        ctxC.clearRect(0, 0, collisionC.width, collisionC.height);
+        ctxC.drawImage(
+            ctx.canvas,
+            playerFight.x, playerFight.y, playerFight.w, playerFight.h,
+            0, 0, playerFight.w, playerFight.h
+        );
+
+        const playerFightArea = ctxC.getImageData(0, 0, collisionC.width, collisionC.height).data;
+        
+        for(let i = 0; i < playerFightArea.length; i += 4) {
+            if(playerFightArea[i] == 255 && playerFightArea[i + 1] == 0 && playerFightArea[i + 2] == 0) {
+                playerFight.health -= standardDamage;
+                playerFight.damageCounter = playerFight.damageCooldown;
+                break;
+            }
+        }
+    } else {
+        playerFight.damageCounter--;
+    }
+    
+    if(playerFight.health == 0) {
+        location.reload();
+    }
+}
+
+function update() {
+    if(mode == modes.NORMAL) {
+        player.x += player.vx;
+
+        collision();
+        roomChange();
+
+        walkCycle();
+        doFade();
+        draw();
+
+        player.px = player.x;
+
+        playerFight.vx = 0
+        playerFight.vy = 0;
+    } else {
+        playerFight.x += playerFight.vx;
+        playerFight.y += playerFight.vy;
+
+        wallCollision();
+        drawFight();
+        hurtCollision();
+
+        player.vx = 0;
+    }
+}
+
+function drawFight() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.globalAlpha = 1.0;
+    
+    //ctx.filter = "none";
+    ctx.fillStyle = playerFight.color;
+    ctx.fillRect(playerFight.x, playerFight.y, playerFight.w, playerFight.h);
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(800, 450, 10, 10);
+
+    ctx.fillStyle = "black";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.fillRect(0, 0, c.width, heightUI);
+    ctx.strokeRect(-ctx.lineWidth, 0, c.width + 2 * ctx.lineWidth, heightUI);
+    ctx.fillStyle = "white";
+    ctx.font = "15px Verdana";
+    ctx.fillText("HEALTH: " + playerFight.health, 10, 20);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.globalAlpha = 1.0;
+
+    ctx.fillStyle = "white";
+
+    ctx.drawImage(floorImage, 0, c.height - 170);
+
+    if(player.facing == "left") {
+        ctx.save();
+        ctx.translate(player.x + player.w, player.y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(player.images[player.image], 0, 0);
+        ctx.restore();
+    } else {
+        ctx.drawImage(player.images[player.image], player.x, player.y);
+    }
+
+    ctx.fillText("room: " + room, 10, 20);
+
+    if(fadeStage != 0) {
+        ctx.globalAlpha = fadeStage / maxFadeStage;
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, c.width, c.height);
+    }
+}
+</script>
