@@ -4,7 +4,6 @@
 </head>
 <body>
 <canvas width="1200" height="600" id="canvas"></canvas>
-<canvas id="collisionCanvas"></canvas>
 </body>
 </html>
 <style>
@@ -46,7 +45,7 @@ var playerFight = {
 }
 
 // secondary canvas for hurt collision
-const collisionC = document.getElementById("collisionCanvas");
+const collisionC = document.createElement("canvas");
 const ctxC = collisionC.getContext("2d");
 collisionC.width = playerFight.w;
 collisionC.height = playerFight.h;
