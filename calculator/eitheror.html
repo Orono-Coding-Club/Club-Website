@@ -56,11 +56,11 @@ const playerImages = [new Image(), new Image(), new Image(), new Image(), new Im
 const floorImage = new Image();
 floorImage.src = "../Assets/eitheror/floor.png";
 
-const objects = [[-30, 30, 0]];
+const objects = [[0, 300, 0]];
 
 const dialogueObjects = [[]];
 
-const images = [["../Assets/eitheror/bed.png", 10, 300, 200, 100, 0]];
+const images = [["../Assets/eitheror/bed.png", 10, 300, 280, 150, 0]];
 
 var room = 0;
 var fade = false;
@@ -69,8 +69,8 @@ const maxFadeStage = 10;
 var fadeOperation;
 
 var player = {
-    x: 20,
-    px: 20,
+    x: 310,
+    px: 310,
     y: 100,
     w: 100,
     h: 350,
@@ -348,8 +348,6 @@ function draw() {
     } else {
         ctx.drawImage(player.images[player.image], player.x, player.y);
     }
-
-    ctx.fillText("room: " + room, 10, 20);
 
     if(fadeStage != 0) {
         ctx.globalAlpha = fadeStage / maxFadeStage;
