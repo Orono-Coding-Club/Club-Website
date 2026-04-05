@@ -58,6 +58,10 @@ floorImage.src = "../Assets/eitheror/floor.png";
 
 const objects = [[-30, 30, 0]];
 
+const dialogueObjects = [[]];
+
+const images = [["../Assets/eitheror/bed.png", 10, 300, 200, 100, 0]];
+
 var room = 0;
 var fade = false;
 var fadeStage = 0;
@@ -325,6 +329,15 @@ function draw() {
     ctx.fillStyle = "white";
 
     ctx.drawImage(floorImage, 0, c.height - 170);
+
+    for(let i = 0; i < images.length; i++) {
+        const image = images[i];
+        if(image[5] == room) {
+            const imageToDraw = new Image();
+            imageToDraw.src = image[0];
+            ctx.drawImage(imageToDraw, image[1], image[2], image[3], image[4]);
+        }
+    }
 
     if(player.facing == "left") {
         ctx.save();
