@@ -64,26 +64,51 @@ floorImage.src = "../Assets/eitheror/floor.png";
 
 const objects = [[0, 300, 0]];
 
+const selfImage = new Image();
+selfImage.src = "../Assets/eitheror/self.png";
+const teacherImage = new Image();
+teacherImage.src = "../Assets/eitheror/teacherface.png";
+const speakers = {
+    THOUGHT: 0,
+    SELF: 1,
+    TEACHER: 2,
+    SELF_IMAGE: selfImage,
+    TEACHER_IMAGE: teacherImage,
+}
+
 let dialogueBuffer = [];
 
-const bedDialogue = ["Your bed.", "Not too much else going on here."];
-const deskDialogue = ["Your desk.", "Your homework from last night is still here, mostly unfinished."];
+let bedDialogue = [["Your bed.", speakers.THOUGHT], ["Not too much else going on here.", speakers.THOUGHT]];
+let deskDialogue = [["Your desk.", speakers.THOUGHT], ["Your homework from last night is still here, mostly unfinished.", speakers.THOUGHT]];
 let dialogueObjects = [[bedDialogue, 0, 340, 0], [deskDialogue, 500, 400, 0]];
 
-const treesDialogue = ["The wind whispers softly in the trees.", "This airy feeling makes you realize you forgot your backpack, but what's the point anyway? You didn't finish your homework."];
-let autoDialogueObjects = [[treesDialogue, 800, 100, 1]];
+for(let i = 0; i < dialogueObjects.length; i++) {
+    dialogueObjects[i].push(speakers.THOUGHT);
+}
+
+let treesDialogue = [["The wind whispers softly in the trees.", speakers.THOUGHT], ["This airy feeling makes you realize you forgot your backpack, but what's the point anyway? You didn't finish your homework.", speakers.THOUGHT]];
+let treesDialogue2 = [["Well, what are the possible outcomes here? There's not taking your backpack, which of course means that you're not getting credit for the homework. And the teacher will probably not be happy either.", speakers.THOUGHT], ["But if you do? Well, you would probably still not get any credit.", speakers.THOUGHT], ["But maybe the teacher would be more understanding if you showed that you actually completed some of it.", speakers.THOUGHT]];
+let treesDialogue3 = [["Ah whatever. You're already basically at school, so why bother?", speakers.THOUGHT]];
+let autoDialogueObjects = [[treesDialogue, 800, 100, 1],
+                           [treesDialogue2, 800, 100, 2],
+                           [treesDialogue3, 800, 100, 3]];
 
 for(let i = 0; i < autoDialogueObjects.length; i++) {
+    autoDialogueObjects[i].push(speakers.THOUGHT);
     autoDialogueObjects[i].push(false);
 }
 
 const groundHeight = 170;
 const images = [["../Assets/eitheror/bedroomwall.png", 0, 0, c.width, c.height - 80, 0], ["../Assets/eitheror/floor.png", 0, c.height - groundHeight, c.width, groundHeight, 0], ["../Assets/eitheror/backpack.png", 250, 350, 70, 110, 0], ["../Assets/eitheror/bed.png", 10, 340, 280, 150, 0], ["../Assets/eitheror/door.png", c.width - 230, 120, 264, 420, 0], ["../Assets/eitheror/desk.png", 500, 290, 400, 200, 0],
-                ["../Assets/eitheror/trees.jpg", 0, 0, c.width, c.height, 1]];
+                ["../Assets/eitheror/trees.jpg", 0, 0, c.width, c.height, 1],
+                ["../Assets/eitheror/trees2.jpg", 0, 0, c.width, c.height, 2],
+                ["../Assets/eitheror/trees3.png", 0, 0, c.width, c.height, 3],
+                ["../Assets/eitheror/hallway.jpg", 0, 0, c.width, c.height, 4]];
 
-const imagesForeground = [["../Assets/eitheror/treesforeground.png", 0, 0, c.width, c.height, 1]];
+const imagesForeground = [["../Assets/eitheror/treesforeground.png", 0, 0, c.width, c.height, 1],
+                          ["../Assets/eitheror/hallwayforeground.png", 0, 0, c.width, c.height, 4]];
 
-var room = 0;
+var room = 4;
 var fade = false;
 var fadeStage = 0;
 const maxFadeStage = 10;
@@ -184,12 +209,12 @@ function continueDialogue() {
 function autoDialogue() {
     for(let i = 0; i < autoDialogueObjects.length; i++) {
         object = autoDialogueObjects[i];
-        if(!object[4] && object[3] == room) {
+        if(!object[5] && object[3] == room) {
             if((player.x >= object[1] && player.x <= object[1] + object[2]) || (player.x + player.w >= object[1] && player.x + player.w <= object[1] + object[2])) {
                 player.inDialogue = true;
                 takeControl();
                 dialogueBuffer = object[0];
-                autoDialogueObjects[i][4] = true;
+                autoDialogueObjects[i][5] = true;
                 break;
             }
         }
@@ -454,10 +479,20 @@ function drawDialogue() {
     ctx.strokeStyle = "white";
     ctx.lineWidth = 4;
     ctx.fillStyle = "white";
-    let text = dialogueBuffer[player.dialogueCounter];
+    let text = dialogueBuffer[player.dialogueCounter][0];
+    let speaker = dialogueBuffer[player.dialogueCounter][1];
 
     ctx.strokeRect(dialogueBox.left, dialogueBox.top, dialogueBox.w, dialogueBox.h);
-    wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
+
+    if(speaker == speakers.THOUGHT) {
+        wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w - 20, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
+    } else if(speaker == speakers.SELF) {
+        ctx.drawImage(speakers.SELF_IMAGE, dialogueBox.left + dialogueBox.x, dialogueBox.top + 20);
+        wrapText(text, dialogueBox.left + dialogueBox.x + 155, dialogueBox.top + dialogueBox.y, dialogueBox.w - 175, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
+    } else if(speaker == speakers.TEACHER) {
+        ctx.drawImage(speakers.TEACHER_IMAGE, dialogueBox.left + dialogueBox.x, dialogueBox.top + 20);
+        wrapText(text, dialogueBox.left + dialogueBox.x + 155, dialogueBox.top + dialogueBox.y, dialogueBox.w - 175, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
+    }
 }
 
 function wrapText(text, x, y, maxWidth, lineHeight) {
