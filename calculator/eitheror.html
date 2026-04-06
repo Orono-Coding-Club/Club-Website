@@ -90,7 +90,7 @@ const dialogueStates = {
     BEGIN_FIGHT: 5,
 }
 
-let dialogueState = dialogueStates.BATHROOM;
+let dialogueState = dialogueStates.BEFORE_TEACHER;
 
 let dialogueBuffer = [];
 
@@ -139,7 +139,7 @@ const imagesForeground = [["../Assets/eitheror/treesforeground.png", 0, 0, c.wid
                           ["../Assets/eitheror/hallwayforeground.png", 0, 0, c.width, c.height, 4],
                           ["../Assets/eitheror/classroomforeground.png", 0, 0, c.width, c.height, 5]];
 
-var room = 5;
+var room = 0;
 var fade = false;
 var fadeStage = 0;
 const maxFadeStage = 10;
