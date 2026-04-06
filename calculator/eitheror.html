@@ -59,9 +59,10 @@ floorImage.src = "../Assets/eitheror/floor.png";
 const objects = [[0, 300, 0]];
 
 let dialogueBuffer = [];
-let dialogueObjects = [[bedDialogue, 0, 305, 0]];
 
 const bedDialogue = ["Your bed.", "Not too much else going on here."];
+
+let dialogueObjects = [[bedDialogue, 0, 350, 0]];
 
 const images = [["../Assets/eitheror/floor.png", 0, c.height - 170, c.width, 170, 0], ["../Assets/eitheror/bed.png", 10, 300, 280, 150, 0]];
 
@@ -93,12 +94,12 @@ var player = {
 dialogueBoxWidth = 800
 const dialogueBox = {
     x: 10,
-    y: 10,
+    y: 25,
     w: dialogueBoxWidth,
-    h: 200,
+    h: 175,
     left: (c.width - dialogueBoxWidth) / 2,
-    top: c.height / 2,
-    font: "15px Arial",
+    top: c.height / 2 + 100,
+    font: "20px Verdana",
     border: 4,
     borderColor: "white",
 }
@@ -153,7 +154,7 @@ function continueDialogue() {
             object = dialogueObjects[i];
             if(object[3] == room) {
                 if((player.x >= object[1] && player.x <= object[1] + object[2]) || (player.x + player.w >= object[1] && player.x + player.w <= object[1] + object[2])) {
-                    player.inDialogue == true;
+                    player.inDialogue = true;
                     takeControl();
                     dialogueBuffer = object[0];
                 }
@@ -207,6 +208,9 @@ document.onkeydown = (e) => {
                 case "KeyD":
                     player.vx = player.speed;
                     player.facing = "right";
+                break;
+                case "Enter":
+                    continueDialogue();
                 break;
             }
         } else {
@@ -351,7 +355,6 @@ function drawFight() {
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.globalAlpha = 1.0;
     
-    //ctx.filter = "none";
     ctx.fillStyle = playerFight.color;
     ctx.fillRect(playerFight.x, playerFight.y, playerFight.w, playerFight.h);
 
@@ -403,14 +406,14 @@ function draw() {
 
 function drawDialogue() {
     ctx.clearRect(dialogueBox.left, dialogueBox.top, dialogueBox.w, dialogueBox.h);
-    ctx.font = "15px Verdana";
+    ctx.font = dialogueBox.font;
     ctx.strokeStyle = "white";
     ctx.lineWidth = 4;
     ctx.fillStyle = "white";
     let text = dialogueBuffer[player.dialogueCounter];
 
     ctx.strokeRect(dialogueBox.left, dialogueBox.top, dialogueBox.w, dialogueBox.h);
-    wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w, 20);
+    wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w, parseFloat(ctx.font.match(/\d+/)[0]) + 4);
 }
 
 function wrapText(text, x, y, maxWidth, lineHeight) {
