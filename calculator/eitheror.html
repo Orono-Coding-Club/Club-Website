@@ -4,11 +4,13 @@
 </head>
 <body>
 <canvas width="1200" height="600" id="mainCanvas"></canvas>
+<p>W A S D to move, Enter to interact</p>
 </body>
 </html>
 <style>
 body {
     text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 canvas {
     background-color: black;
@@ -19,6 +21,8 @@ const c = document.getElementById("mainCanvas");
 const ctx = c.getContext("2d");
 
 const updateInterval = 10;
+
+const defaultMusic = new Audio("../Assets/eitheror/default.mp3");
 
 // fight mode stuff
 const standardDamage = 5;
@@ -61,10 +65,21 @@ const objects = [[0, 300, 0]];
 let dialogueBuffer = [];
 
 const bedDialogue = ["Your bed.", "Not too much else going on here."];
+const deskDialogue = ["Your desk.", "Your homework from last night is still here, mostly unfinished."];
+let dialogueObjects = [[bedDialogue, 0, 340, 0], [deskDialogue, 500, 400, 0]];
 
-let dialogueObjects = [[bedDialogue, 0, 350, 0]];
+const treesDialogue = ["The wind whispers softly in the trees.", "This airy feeling makes you realize you forgot your backpack, but what's the point anyway? You didn't finish your homework."];
+let autoDialogueObjects = [[treesDialogue, 800, 100, 1]];
 
-const images = [["../Assets/eitheror/floor.png", 0, c.height - 170, c.width, 170, 0], ["../Assets/eitheror/bed.png", 10, 300, 280, 150, 0]];
+for(let i = 0; i < autoDialogueObjects.length; i++) {
+    autoDialogueObjects[i].push(false);
+}
+
+const groundHeight = 170;
+const images = [["../Assets/eitheror/bedroomwall.png", 0, 0, c.width, c.height - 80, 0], ["../Assets/eitheror/floor.png", 0, c.height - groundHeight, c.width, groundHeight, 0], ["../Assets/eitheror/backpack.png", 250, 350, 70, 110, 0], ["../Assets/eitheror/bed.png", 10, 340, 280, 150, 0], ["../Assets/eitheror/door.png", c.width - 230, 120, 264, 420, 0], ["../Assets/eitheror/desk.png", 500, 290, 400, 200, 0],
+                ["../Assets/eitheror/trees.jpg", 0, 0, c.width, c.height, 1]];
+
+const imagesForeground = [["../Assets/eitheror/treesforeground.png", 0, 0, c.width, c.height, 1]];
 
 var room = 0;
 var fade = false;
@@ -75,7 +90,7 @@ var fadeOperation;
 var player = {
     x: 310,
     px: 310,
-    y: 100,
+    y: 180,
     w: 100,
     h: 350,
     vx: 0,
@@ -157,7 +172,23 @@ function continueDialogue() {
                     player.inDialogue = true;
                     takeControl();
                     dialogueBuffer = object[0];
+                    break;
                 }
+            }
+        }
+    }
+}
+
+function autoDialogue() {
+    for(let i = 0; i < autoDialogueObjects.length; i++) {
+        object = autoDialogueObjects[i];
+        if(!object[4] && object[3] == room) {
+            if((player.x >= object[1] && player.x <= object[1] + object[2]) || (player.x + player.w >= object[1] && player.x + player.w <= object[1] + object[2])) {
+                player.inDialogue = true;
+                takeControl();
+                dialogueBuffer = object[0];
+                autoDialogueObjects[i][4] = true;
+                break;
             }
         }
     }
@@ -329,6 +360,8 @@ function update() {
 
         walkCycle();
         doFade();
+        autoDialogue();
+
         draw();
 
         player.px = player.x;
@@ -396,6 +429,15 @@ function draw() {
         ctx.drawImage(player.images[player.image], player.x, player.y);
     }
 
+    for(let i = 0; i < imagesForeground.length; i++) {
+        let image = imagesForeground[i];
+        if(image[5] == room) {
+            const imageToDraw = new Image();
+            imageToDraw.src = image[0];
+            ctx.drawImage(imageToDraw, image[1], image[2], image[3], image[4]);
+        }
+    }
+
     if(fadeStage != 0) {
         ctx.globalAlpha = fadeStage / maxFadeStage;
         ctx.globalAlpha = 1.0;
@@ -413,7 +455,7 @@ function drawDialogue() {
     let text = dialogueBuffer[player.dialogueCounter];
 
     ctx.strokeRect(dialogueBox.left, dialogueBox.top, dialogueBox.w, dialogueBox.h);
-    wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w, parseFloat(ctx.font.match(/\d+/)[0]) + 4);
+    wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
 }
 
 function wrapText(text, x, y, maxWidth, lineHeight) {
