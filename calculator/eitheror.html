@@ -22,7 +22,10 @@ canvas {
 const c = document.getElementById("mainCanvas");
 const ctx = c.getContext("2d");
 
-const updateInterval = 10;
+let time = Date.now();
+let previousTime = Date.now();
+
+const updateInterval = 15;
 
 const defaultMusic = new Audio("../Assets/eitheror/default.mp3");
 
@@ -37,8 +40,8 @@ const modes = {
 var mode = modes.NORMAL;
 
 var playerFight = {
-    x: 40,
-    y: 40,
+    x: c.width / 2 - 10,
+    y: c.height / 2 - 10,
     vx: 0,
     vy: 0,
     speed: 5,
@@ -57,12 +60,13 @@ collisionC.width = playerFight.w;
 collisionC.height = playerFight.h;
 
 // normal mode stuff
-const playerImageSrc = ["../Assets/eitheror/player0.png", "../Assets/eitheror/player1.png", "../Assets/eitheror/player2.png", "../Assets/eitheror/player3.png", "../Assets/eitheror/player4.png"];
-const playerImages = [new Image(), new Image(), new Image(), new Image(), new Image()];
+const playerImageSrc = ["../Assets/eitheror/player0.png", "../Assets/eitheror/player1.png", "../Assets/eitheror/player2.png", "../Assets/eitheror/player3.png", "../Assets/eitheror/player4.png", "../Assets/eitheror/player5.png", "../Assets/eitheror/player6.png", "../Assets/eitheror/player7.png", "../Assets/eitheror/player8.png", "../Assets/eitheror/player9.png"];
+const playerImages = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()];
 const floorImage = new Image();
 floorImage.src = "../Assets/eitheror/floor.png";
 
-const objects = [[0, 300, 0]];
+const objects = [[0, 300, 0],
+                 [950, 100, 5]];
 
 const selfImage = new Image();
 selfImage.src = "../Assets/eitheror/self.png";
@@ -76,39 +80,63 @@ const speakers = {
     TEACHER_IMAGE: teacherImage,
 }
 
+const dialogueStates = {
+    PERSISTENT: 0,
+    BEFORE_TEACHER: 1,
+    AFTER_TEACHER: 2,
+    AFTER_HOMEWORK: 3,
+    BATHROOM: 4,
+    BEGIN_FIGHT: 5,
+}
+
+let dialogueState = dialogueStates.AFTER_HOMEWORK;
+
 let dialogueBuffer = [];
 
 let bedDialogue = [["Your bed.", speakers.THOUGHT], ["Not too much else going on here.", speakers.THOUGHT]];
 let deskDialogue = [["Your desk.", speakers.THOUGHT], ["Your homework from last night is still here, mostly unfinished.", speakers.THOUGHT]];
-let dialogueObjects = [[bedDialogue, 0, 340, 0], [deskDialogue, 500, 400, 0]];
-
-for(let i = 0; i < dialogueObjects.length; i++) {
-    dialogueObjects[i].push(speakers.THOUGHT);
-}
+let teacherDialogue = [["Please go get your stuff.", speakers.TEACHER]];
+let homeworkDialogue = [["Your homework is still here. You grab it and stuff it into your pocket.", speakers.THOUGHT], [dialogueStates.AFTER_HOMEWORK]];
+let homeworkDialogue2 = [["Not too much else going on here.", speakers.THOUGHT]];
+let backpackDialogue = [["I don't need my backpack today.", speakers.SELF]];
+let dialogueObjects = [[bedDialogue, 0, 340, 0, dialogueStates.BEFORE_TEACHER], [deskDialogue, 500, 400, 0, dialogueStates.BEFORE_TEACHER],
+                       [teacherDialogue, 900, 100, 5, dialogueStates.AFTER_TEACHER],
+                       [homeworkDialogue, 500, 400, 0, dialogueStates.AFTER_TEACHER], [homeworkDialogue2, 500, 400, 0, dialogueStates.AFTER_HOMEWORK], [backpackDialogue, 0, 340, 0, dialogueStates.AFTER_TEACHER], [backpackDialogue, 0, 340, 0, dialogueStates.AFTER_HOMEWORK]];
 
 let treesDialogue = [["The wind whispers softly in the trees.", speakers.THOUGHT], ["This airy feeling makes you realize you forgot your backpack, but what's the point anyway? You didn't finish your homework.", speakers.THOUGHT]];
 let treesDialogue2 = [["Well, what are the possible outcomes here? There's not taking your backpack, which of course means that you're not getting credit for the homework. And the teacher will probably not be happy either.", speakers.THOUGHT], ["But if you do? Well, you would probably still not get any credit.", speakers.THOUGHT], ["But maybe the teacher would be more understanding if you showed that you actually completed some of it.", speakers.THOUGHT]];
 let treesDialogue3 = [["Ah whatever. You're already basically at school, so why bother?", speakers.THOUGHT]];
-let autoDialogueObjects = [[treesDialogue, 800, 100, 1],
-                           [treesDialogue2, 800, 100, 2],
-                           [treesDialogue3, 800, 100, 3]];
+let teacherDialogueAuto = [["Good morning.", speakers.TEACHER], ["Hi.", speakers.SELF], ["So, uh, finish your homework?", speakers.TEACHER], ["No..", speakers.SELF], ["Do you have it?", speakers.TEACHER], ["Also no.", speakers.SELF], ["Ah, you should've brought it. I'd definitely be willing to help if you are struggling.", speakers.TEACHER], ["SEE! Should have gotten your stuff lol.", speakers.THOUGHT], ["That sounds great. Maybe I could go grab it, considering that there's still some time before class starts.", speakers.SELF], ["Good plan. Go and get your stuff.", speakers.TEACHER], [dialogueStates.AFTER_TEACHER]];
+let returnDialogue = [["See? It would've made sense to bring your homework.", speakers.THOUGHT], ["This is what happens when you try to boil down a complex situation to just a few outcomes.", speakers.THOUGHT], ["You might still have some water left, the essence of the situation, but you lose most of it.", speakers.THOUGHT]];
+let returnDialogue2 = [["This is an awfully long walk.", speakers.SELF], ["I guess I'm not helping by talking.", speakers.SELF], ["(How did he know that?)", speakers.THOUGHT]];
+let teacherDialogueAuto2 = [["Thank you for getting your homework.", speakers.TEACHER], ["Sorry about that.", speakers.SELF], ["It's ok. So what were you having trouble with?", speakers.TEACHER], ["Question 3 was tough.", speakers.SELF], ["Ok, let's take a look. So the question is asking for the inverse of matrix A, where A is a 2x2 matrix with entries 1, 0, 0, 0. What was your approach to this?", speakers.TEACHER], ["Well, I used the inverse formula for 2x2 matrices, but I got stuck when I got to a point where I had to divide by zero.", speakers.SELF], ["Do you remember what that means?", speakers.TEACHER], ["No, so I thought the question must be wrong.", speakers.SELF], ["Actually, if you get an undefined answer, that means there is no inverse.", speakers.TEACHER], ["Ohh, now I remember.", speakers.SELF], ["Why was I being so limiting in my thought process? Maybe I need to rethink some things.", speakers.THOUGHT], ["Thank you for explaining. Can I go to the bathroom please?", speakers.SELF], ["IDK, can you?", speakers.TEACHER], ["Haha, I'm justing kidding. Go ahead.", speakers.TEACHER], ["Thank you.", speakers.SELF], [dialogueStates.BATHROOM]];
+let bathroomDialogue = [["It's weird how I keep trying to force these situations into binaries.", speakers.THOUGHT], ["Maybe I need to confront my ways of thinking.", speakers.THOUGHT], [dialogueStates.BEGIN_FIGHT]];
+let autoDialogueObjects = [[treesDialogue, 800, 100, 1, dialogueStates.BEFORE_TEACHER],
+                           [treesDialogue2, 800, 100, 2, dialogueStates.BEFORE_TEACHER],
+                           [treesDialogue3, 800, 100, 3, dialogueStates.BEFORE_TEACHER],
+                           [teacherDialogueAuto, 900, 100, 5, dialogueStates.BEFORE_TEACHER],
+                           [returnDialogue, 300, 100, 4, dialogueStates.AFTER_TEACHER],
+                           [returnDialogue2, 300, 100, 2, dialogueStates.AFTER_TEACHER],
+                           [teacherDialogueAuto2, 900, 100, 5, dialogueStates.AFTER_HOMEWORK],
+                           [bathroomDialogue, 450, 100, 4, dialogueStates.BATHROOM]];
 
 for(let i = 0; i < autoDialogueObjects.length; i++) {
-    autoDialogueObjects[i].push(speakers.THOUGHT);
     autoDialogueObjects[i].push(false);
 }
 
 const groundHeight = 170;
-const images = [["../Assets/eitheror/bedroomwall.png", 0, 0, c.width, c.height - 80, 0], ["../Assets/eitheror/floor.png", 0, c.height - groundHeight, c.width, groundHeight, 0], ["../Assets/eitheror/backpack.png", 250, 350, 70, 110, 0], ["../Assets/eitheror/bed.png", 10, 340, 280, 150, 0], ["../Assets/eitheror/door.png", c.width - 230, 120, 264, 420, 0], ["../Assets/eitheror/desk.png", 500, 290, 400, 200, 0],
+let images = [["../Assets/eitheror/bedroomwall.png", 0, 0, c.width, c.height - 80, 0], ["../Assets/eitheror/floor.png", 0, c.height - groundHeight, c.width, groundHeight, 0], ["../Assets/eitheror/backpack.png", 250, 350, 70, 110, 0], ["../Assets/eitheror/bed.png", 10, 340, 280, 150, 0], ["../Assets/eitheror/door.png", c.width - 230, 120, 264, 420, 0], ["../Assets/eitheror/desk.png", 500, 290, 400, 200, 0],
                 ["../Assets/eitheror/trees.jpg", 0, 0, c.width, c.height, 1],
                 ["../Assets/eitheror/trees2.jpg", 0, 0, c.width, c.height, 2],
                 ["../Assets/eitheror/trees3.png", 0, 0, c.width, c.height, 3],
-                ["../Assets/eitheror/hallway.jpg", 0, 0, c.width, c.height, 4]];
+                ["../Assets/eitheror/hallway.jpg", 0, 0, c.width, c.height, 4],
+                ["../Assets/eitheror/classroom.png", 0, 0, c.width, c.height, 5], ["../Assets/eitheror/teacher.png", 1000, 180, 100, 350, 5]];
 
 const imagesForeground = [["../Assets/eitheror/treesforeground.png", 0, 0, c.width, c.height, 1],
-                          ["../Assets/eitheror/hallwayforeground.png", 0, 0, c.width, c.height, 4]];
+                          ["../Assets/eitheror/hallwayforeground.png", 0, 0, c.width, c.height, 4],
+                          ["../Assets/eitheror/classroomforeground.png", 0, 0, c.width, c.height, 5]];
 
-var room = 4;
+var room = 5;
 var fade = false;
 var fadeStage = 0;
 const maxFadeStage = 10;
@@ -126,7 +154,7 @@ var player = {
     image: 0,
     images: [],
     inControl: true,
-    walkCycleInterval: 6,
+    walkCycleInterval: 4,
     walkCycleCounter: 0,
     facing: "right",
     inDialogue: false,
@@ -171,7 +199,7 @@ function walkCycle() {
 
 function collision() {
     for(var i = 0; i < objects.length; i++) {
-        var object = objects[i];
+        let object = objects[i];
         for(var j = player.x; j < player.x + player.w; j++) {
             if(j > object[0] && j < object[0] + object[1] && room == object[2]) {
                 player.x = player.px;
@@ -193,11 +221,15 @@ function continueDialogue() {
         }
     } else {
         for(let i = 0; i < dialogueObjects.length; i++) {
-            object = dialogueObjects[i];
-            if(object[3] == room) {
+            let object = dialogueObjects[i];
+            if(object[4] == dialogueState && object[3] == room) {
                 if((player.x >= object[1] && player.x <= object[1] + object[2]) || (player.x + player.w >= object[1] && player.x + player.w <= object[1] + object[2])) {
                     player.inDialogue = true;
                     takeControl();
+                    if(object[0][object[0].length - 1].length == 1) {
+                        dialogueState = object[0][object[0].length - 1][0];
+                        object[0].pop();
+                    }
                     dialogueBuffer = object[0];
                     break;
                 }
@@ -208,11 +240,15 @@ function continueDialogue() {
 
 function autoDialogue() {
     for(let i = 0; i < autoDialogueObjects.length; i++) {
-        object = autoDialogueObjects[i];
-        if(!object[5] && object[3] == room) {
+        let object = autoDialogueObjects[i];
+        if(object[4] == dialogueState && !object[5] && object[3] == room) {
             if((player.x >= object[1] && player.x <= object[1] + object[2]) || (player.x + player.w >= object[1] && player.x + player.w <= object[1] + object[2])) {
                 player.inDialogue = true;
                 takeControl();
+                if(object[0][object[0].length - 1].length == 1) {
+                    dialogueState = object[0][object[0].length - 1][0];
+                    object[0].pop();
+                }
                 dialogueBuffer = object[0];
                 autoDialogueObjects[i][5] = true;
                 break;
@@ -379,6 +415,7 @@ function hurtCollision() {
 }
 
 function update() {
+    time = Date.now();
     if(mode == modes.NORMAL) {
         player.x += player.vx;
 
@@ -398,6 +435,9 @@ function update() {
 
         if(player.inDialogue) {
             drawDialogue();
+        } else if(dialogueState == dialogueStates.BEGIN_FIGHT) {
+            fade = true;
+            mode = modes.FIGHT;
         }
     } else {
         playerFight.x += playerFight.vx;
@@ -409,6 +449,7 @@ function update() {
 
         player.vx = 0;
     }
+    previousTime = Date.now();
 }
 
 function drawFight() {
@@ -487,11 +528,11 @@ function drawDialogue() {
     if(speaker == speakers.THOUGHT) {
         wrapText(text, dialogueBox.left + dialogueBox.x, dialogueBox.top + dialogueBox.y, dialogueBox.w - 20, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
     } else if(speaker == speakers.SELF) {
-        ctx.drawImage(speakers.SELF_IMAGE, dialogueBox.left + dialogueBox.x, dialogueBox.top + 20);
-        wrapText(text, dialogueBox.left + dialogueBox.x + 155, dialogueBox.top + dialogueBox.y, dialogueBox.w - 175, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
+        ctx.drawImage(speakers.SELF_IMAGE, dialogueBox.left + dialogueBox.x, dialogueBox.top + 10);
+        wrapText(text, dialogueBox.left + dialogueBox.x + 165, dialogueBox.top + dialogueBox.y, dialogueBox.w - 185, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
     } else if(speaker == speakers.TEACHER) {
-        ctx.drawImage(speakers.TEACHER_IMAGE, dialogueBox.left + dialogueBox.x, dialogueBox.top + 20);
-        wrapText(text, dialogueBox.left + dialogueBox.x + 155, dialogueBox.top + dialogueBox.y, dialogueBox.w - 175, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
+        ctx.drawImage(speakers.TEACHER_IMAGE, dialogueBox.left + dialogueBox.x, dialogueBox.top + 10);
+        wrapText(text, dialogueBox.left + dialogueBox.x + 165, dialogueBox.top + dialogueBox.y, dialogueBox.w - 185, parseFloat(ctx.font.match(/\d+/)[0]) + 6);
     }
 }
 
