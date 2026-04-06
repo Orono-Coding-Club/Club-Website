@@ -192,7 +192,7 @@ function doFade() {
         } else {
             fadeStage++;
         }
-    } else {
+    } else if(!player.inDialogue) {
         player.inControl = true;
     }
 }
